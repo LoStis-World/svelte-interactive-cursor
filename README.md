@@ -88,7 +88,7 @@ Here’s an example of how to use the `InteractiveCursor` component in a Svelte 
 	import InteractiveCursor, {
 		type InteractiveCursorProps,
 		type interactiveStateItem
-	} from './interactive-cursor.svelte';
+	} from '@lostisworld/svelte-interactive-cursor';
 
 	// Define custom interactive states
 	const customStates: interactiveStateItem[] = [
