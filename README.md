@@ -2,6 +2,22 @@
 
 The `InteractiveCursor` is a Svelte component that provides a customizable and interactive cursor experience. It dynamically updates its appearance based on defined interactive states and responds to user interactions in specified trigger areas.
 
+## Installation
+
+You can install the `InteractiveCursor` component using npm or pnpm:
+
+### Using npm
+
+```bash
+npm install @lostisworld/svelte-interactive-cursor
+```
+
+### Using pnpm
+
+```bash
+pnpm add @lostisworld/svelte-interactive-cursor
+```
+
 ---
 
 ## Features
@@ -25,7 +41,6 @@ The `InteractiveCursor` is a Svelte component that provides a customizable and i
 | `defaultSize`             | `number`                      | `32`        | Default size of the cursor in pixels.                                           |
 | `activeSizeMultiplicator` | `number`                      | `3`         | Size multiplier for the cursor when it is active.                               |
 | `triggerAreas`            | `string[]` or `HTMLElement[]` | `required`  | Array of CSS selectors or DOM elements where the interactive cursor is enabled. |
-| `target`                  | `HTMLElement` or `string`     | `undefined` | Target element for additional customizations (optional).                        |
 
 ---
 
@@ -33,12 +48,12 @@ The `InteractiveCursor` is a Svelte component that provides a customizable and i
 
 ### `interactiveStateItem`
 
-| Property      | Type       | Description                        |
-| ------------- | ---------- | ---------------------------------- | ---------------------------------------------------------------- | -------- | ----------------------------------------------------------- |
-| `data`        | `link`     | `image`                            | `video`                                                          | `string` | Defines the type of interaction (e.g., link, image, video). |
-| `icon`        | `IconName` | `HTMLElement`                      | Icon or custom HTML element displayed when this state is active. |          |                                                             |
-| `iconClass`   | `string`   | Additional classes for the icon.   |                                                                  |          |                                                             |
-| `cursorClass` | `string`   | Additional classes for the cursor. |                                                                  |          |                                                             |
+| Property      | Type                        | Description                                                      |
+| ------------- | --------------------------- | ---------------------------------------------------------------- |
+| `data`        | `string`                    | Defines the type of interaction (e.g., link, image, video).      |
+| `icon`        | `IconName` or `HTMLElement` | Icon or custom HTML element displayed when this state is active. |
+| `iconClass`   | `string`                    | Additional classes for the icon.                                 |
+| `cursorClass` | `string`                    | Additional classes for the cursor.                               |
 
 ---
 
@@ -46,9 +61,9 @@ The `InteractiveCursor` is a Svelte component that provides a customizable and i
 
 The component comes with the following pre-configured interactive states:
 
-1. **Link**: `data: 'link'`, icon: `'Arrow up right'`, `cursorClass: 'bg-lw-turkis'`
-2. **Image**: `data: 'image'`, icon: `'Image'`
-3. **Video**: `data: 'video'`, icon: `'Video'`
+1. **Link**: `data: 'link'`, icon: `heroicons - arrow-up-right`
+2. **Image**: `data: 'image'`, icon: `heroicons - photo`
+3. **Video**: `data: 'video'`, icon: `heroicons - video-camera`
 
 These defaults can be overridden by providing a custom `setInteractiveState` array.
 
@@ -62,32 +77,32 @@ Here’s an example of how to use the `InteractiveCursor` component in a Svelte 
 
 1. Install and import the `InteractiveCursor` component.
 
-   ```svelte
-   <script lang="ts">
-   	import InteractiveCursor, {
-   		type InteractiveCursorProps,
-   		type interactiveStateItem
-   	} from './interactive-cursor.svelte';
+```html
+<script lang="ts">
+	import InteractiveCursor, {
+		type InteractiveCursorProps,
+		type interactiveStateItem
+	} from './interactive-cursor.svelte';
 
-   	// Define custom interactive states
-   	const customStates: interactiveStateItem[] = [
-   		{ data: 'link', icon: 'Link', cursorClass: 'bg-blue-500' },
-   		{ data: 'button', icon: 'Button', cursorClass: 'bg-red-500' }
-   	];
+	// Define custom interactive states
+	const customStates: interactiveStateItem[] = [
+		{ data: 'link', icon: 'Link', cursorClass: 'bg-blue-500' },
+		{ data: 'button', icon: 'Button', cursorClass: 'bg-red-500' }
+	];
 
-   	const triggerAreas = ['.interactive-area'];
-   </script>
-   ```
+	const triggerAreas = ['.interactive-area'];
+</script>
+```
 
 ### Add Component
 
-```svelte
+```html
 <InteractiveCursor
 	class="my-custom-cursor"
-	duration={400}
-	defaultSize={40}
-	activeSizeMultiplicator={2.5}
-	setInteractiveState={customStates}
+	duration="{400}"
+	defaultSize="{40}"
+	activeSizeMultiplicator="{2.5}"
+	setInteractiveState="{customStates}"
 	{triggerAreas}
 />
 ```
