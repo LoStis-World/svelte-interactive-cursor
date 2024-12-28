@@ -2,6 +2,10 @@
 
 The `InteractiveCursor` is a Svelte component that provides a customizable and interactive cursor experience. It dynamically updates its appearance based on defined interactive states and responds to user interactions in specified trigger areas.
 
+![](./static/images/interactive-cursor.gif)
+
+---
+
 ## Installation
 
 You can install the `InteractiveCursor` component using npm or pnpm:
