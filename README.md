@@ -36,9 +36,9 @@ The `InteractiveCursor` is a Svelte component that provides a customizable and i
 | Property      | Type       | Description                        |
 | ------------- | ---------- | ---------------------------------- | ---------------------------------------------------------------- | -------- | ----------------------------------------------------------- |
 | `data`        | `link`     | `image`                            | `video`                                                          | `string` | Defines the type of interaction (e.g., link, image, video). |
-| `icon`        | `IconName` | `HTMLElement`                      | Icon or custom HTML element displayed when this state is active. |
-| `iconClass`   | `string`   | Additional classes for the icon.   |
-| `cursorClass` | `string`   | Additional classes for the cursor. |
+| `icon`        | `IconName` | `HTMLElement`                      | Icon or custom HTML element displayed when this state is active. |          |                                                             |
+| `iconClass`   | `string`   | Additional classes for the icon.   |                                                                  |          |                                                             |
+| `cursorClass` | `string`   | Additional classes for the cursor. |                                                                  |          |                                                             |
 
 ---
 
