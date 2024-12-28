@@ -10,6 +10,14 @@
 		"svelte cursor",
 		"svelte component"
 	],
+	"homepage": "https://github.com/LoStis-World/svelte-interactive-cursor#readme",
+	"bugs": {
+		"url": "https://github.com/LoStis-World/svelte-interactive-cursor/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/LoStis-World/svelte-interactive-cursor.git"
+	},
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build && npm run package",
