@@ -1,8 +1,20 @@
-// Reexport your entry components here
-import {
-	InteractiveCursor,
-	type InteractiveCursorProps,
-	type interactiveStateItem
-} from './interactive-cursor/index.js';
+import InteractiveCursor from './interactive-cursor.svelte';
 
-export { InteractiveCursor, type InteractiveCursorProps, type interactiveStateItem };
+type interactiveStateItem = {
+	data: 'link' | 'image' | 'video' | string;
+	icon?: string | HTMLElement;
+	cursorClass?: string;
+};
+
+interface InteractiveCursorProps {
+	class?: string;
+	setInteractiveState?: interactiveStateItem[];
+	duration?: number;
+	defaultSize?: number;
+	activeSizeMultiplicator?: number;
+	triggerAreas: string[] | HTMLElement[];
+}
+
+export default InteractiveCursor;
+
+export { type InteractiveCursorProps, type interactiveStateItem };
