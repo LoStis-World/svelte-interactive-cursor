@@ -48,7 +48,7 @@
 		const target = e.target as HTMLElement;
 		pointerCords = {
 			x: e.clientX - cursor.offsetWidth / 2,
-			y: e.clientY - cursor.offsetHeight / 2 + (window.scrollY ?? 0)
+			y: e.clientY - cursor.offsetHeight / 2 + (window.scrollY || window.pageYOffset)
 		};
 		isActive = true;
 
@@ -129,7 +129,7 @@
 		'interactive-cursor',
 		isActive && 'active',
 		classes,
-		{setInteractiveState.find((state) => state.data === currentInteractiveState)?.cursorClass || ''}
+		setInteractiveState.find((state) => state.data === currentInteractiveState)?.cursorClass || ''
 	]}
 	aria-hidden="true"
 >
