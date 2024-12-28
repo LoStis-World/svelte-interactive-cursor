@@ -134,7 +134,7 @@
 		),
 		classes,
 		setInteractiveState.find((state) => state.data === currentInteractiveState)?.cursorClass || '')
-	}
+	)}
 	aria-hidden="true"
 >
 	{#each finalInteractiveStates as { icon, data }}
