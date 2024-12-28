@@ -167,5 +167,4 @@
 			transition-duration: 500ms;
 		}
 	}
-
 </style>
