@@ -94,21 +94,21 @@
 
 		// Add event listeners
 		triggerAreaElements?.forEach((triggerAreaElement) => {
-			triggerAreaElement?.addEventListener('pointermove', startCursorTracking as EventListener, {
+			triggerAreaElement?.addEventListener('mousemove', startCursorTracking as EventListener, {
 				passive: true
 			});
-			triggerAreaElement?.addEventListener('pointerleave', stopCursorTracking as EventListener);
+			triggerAreaElement?.addEventListener('mouseleave', stopCursorTracking as EventListener);
 		});
 
 		// Remove event listeners on destroy
 		return () => {
 			triggerAreaElements?.forEach((triggerAreaElement) => {
 				triggerAreaElement?.removeEventListener(
-					'pointermove',
+					'mousemove',
 					startCursorTracking as EventListener
 				);
 				triggerAreaElement?.removeEventListener(
-					'pointerleave',
+					'mouseleave',
 					stopCursorTracking as EventListener
 				);
 			});
@@ -127,14 +127,11 @@
 <div
 	bind:this={cursor}
 	style="--size:{defaultSize}px;"
-	class={twMerge(
-		clsx(
-		'fixed top-0 left-0 z-[100] pointer-events-none motion-safe:transition-all motion-safe:duration-500 size-[var(--size)] flex justify-center items-center',
-		isActive ? 'visible opacity-100' : 'invisible opacity-0',
-		),
+	class="lw-interactive-cursor {twMerge(
 		classes,
-		setInteractiveState.find((state) => state.data === currentInteractiveState)?.cursorClass || '')
-	)}
+		setInteractiveState.find((state) => state.data === currentInteractiveState)?.cursorClass || ''
+	)}"
+	class:active={isActive}
 	aria-hidden="true"
 >
 	{#each finalInteractiveStates as { icon, data }}
@@ -143,3 +140,29 @@
 		{/if}
 	{/each}
 </div>
+
+<style>
+	.lw-interactive-cursor {
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 100;
+		pointer-events: none;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: var(--size);
+		height: var(--size);
+		opacity: 0;
+		visibility: hidden;
+	}
+	.lw-interactive-cursor.active {
+		opacity: 1;
+		visibility: visible;
+	}
+	@media (prefers-reduced-motion: no-preference) {
+		.lw-interactive-cursor {
+			transition: all 500ms cubic-bezier(0.4, 0, 0.2, 1);
+		}
+	}
+	</style>
