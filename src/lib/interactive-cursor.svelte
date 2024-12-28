@@ -1,7 +1,5 @@
 <script lang="ts">
 	import type { InteractiveCursorProps, interactiveStateItem } from './index.js';
-	import { twMerge } from 'tailwind-merge';
-	import { clsx } from 'clsx';
 
 	// Props
 	let {
@@ -127,10 +125,7 @@
 <div
 	bind:this={cursor}
 	style="--size:{defaultSize}px;"
-	class="lw-interactive-cursor {twMerge(
-		classes,
-		setInteractiveState.find((state) => state.data === currentInteractiveState)?.cursorClass || ''
-	)}"
+	class="lw-interactive-cursor {classes} {setInteractiveState.find((state) => state.data === currentInteractiveState)?.cursorClass || ''}"
 	class:active={isActive}
 	aria-hidden="true"
 >
