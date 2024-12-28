@@ -1,6 +1,6 @@
 {
 	"name": "@lostisworld/svelte-interactive-cursor",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"description": "A Svelte component for creating interactive custom cursors. Enhance user experience with customizable cursor effects and animations.",
 	"keywords": [
 		"svelte",
@@ -47,7 +47,9 @@
 		}
 	},
 	"peerDependencies": {
-		"svelte": "^5.0.0"
+		"svelte": "^5.0.0",
+		"tailwind-merge": "^2.6.0",
+		"clsx": "^2.1.1"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.0.0",
