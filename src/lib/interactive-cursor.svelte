@@ -1,5 +1,7 @@
 <script lang="ts">
 	import type { InteractiveCursorProps, interactiveStateItem } from './index.js';
+	import { twMerge } from 'tailwind-merge';
+	import { clsx } from 'clsx';
 
 	// Props
 	let {
@@ -125,12 +127,14 @@
 <div
 	bind:this={cursor}
 	style="--size:{defaultSize}px;"
-	class={[
-		'interactive-cursor',
-		isActive && 'active',
+	class={twMerge(
+		clsx(
+		'fixed top-0 left-0 z-[100] pointer-events-none motion-safe:transition-all motion-safe:duration-500 size-[var(--size)] flex justify-center items-center',
+		isActive ? 'visible opacity-100' : 'invisible opacity-0',
+		),
 		classes,
-		setInteractiveState.find((state) => state.data === currentInteractiveState)?.cursorClass || ''
-	]}
+		setInteractiveState.find((state) => state.data === currentInteractiveState)?.cursorClass || '')
+	}
 	aria-hidden="true"
 >
 	{#each finalInteractiveStates as { icon, data }}
@@ -139,32 +143,3 @@
 		{/if}
 	{/each}
 </div>
-
-<style>
-	.interactive-cursor {
-		pointer-events: none;
-		left: 0;
-		top: 0;
-		z-index: 100;
-		visibility: hidden;
-		opacity: 0;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: var(--size);
-		height: var(--size);
-	}
-
-	.interactive-cursor.active {
-		visibility: visible;
-		opacity: 1;
-	}
-
-	@media (prefers-reduced-motion: no-preference) {
-		.interactive-cursor  {
-			transition-property: all;
-			transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-			transition-duration: 500ms;
-		}
-	}
-</style>
