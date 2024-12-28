@@ -126,10 +126,8 @@
 	bind:this={cursor}
 	style="--size:{defaultSize}px;"
 	class={[
-		'pointer-events-none fixed left-0 top-0 z-100',
-		'motion-safe:transition-all motion-safe:duration-500',
-		'flex size-[var(--size)] items-center justify-center rounded-full bg-white text-black',
-		isActive ? 'visible opacity-100' : 'invisible opacity-0',
+		'interactive-cursor',
+		isActive && 'active',
 		classes,
 		setInteractiveState.find((state) => state.data === currentInteractiveState)?.cursorClass || ''
 	]}
@@ -143,66 +141,30 @@
 </div>
 
 <style>
-	:global {
-		.pointer-events-none {
-			pointer-events: none;
-		}
-		.fixed {
-			position: fixed;
-		}
-		.left-0 {
-			left: 0;
-		}
-		.top-0 {
-			top: 0;
-		}
-		.z-100 {
-			z-index: 100;
-		}
-		.visible {
-			visibility: visible;
-		}
-		.invisible {
-			visibility: hidden;
-		}
-		.opacity-0 {
-			opacity: 0;
-		}
-		.opacity-100 {
-			opacity: 1;
-		}
-		.flex {
-			display: flex;
-		}
-		.items-center {
-			align-items: center;
-		}
-		.justify-center {
-			justify-content: center;
-		}
-		.rounded-full {
-			border-radius: 9999px;
-		}
-		.bg-white {
-			background-color: #fff;
-		}
-		.text-black {
-			color: #000;
-		}
-		.size-\[var(--size)\] {
-			width: var(--size);
-			height: var(--size);
-		}
+	.interactive-cursor {
+		pointer-events: none;
+		left: 0;
+		top: 0;
+		z-index: 100;
+		visibility: hidden;
+		opacity: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: var(--size);
+		height: var(--size);
+	}
 
-		@media (prefers-reduced-motion: no-preference) {
-			.motion-safe\:transition-all {
-				transition-property: all;
-				transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-				transition-duration: 150ms;
-			}
-			.motion-safe\:duration-500 {
-				transition-duration: 500ms;
-			}
+	.interactive-cursor.active {
+		visibility: visible;
+		opacity: 1;
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		.interactive-cursor  {
+			transition-property: all;
+			transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+			transition-duration: 500ms;
 		}
 	}
 
