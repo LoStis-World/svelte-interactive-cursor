@@ -1,6 +1,6 @@
 {
 	"name": "@lostisworld/svelte-interactive-cursor",
-	"version": "0.0.9",
+	"version": "0.0.10",
 	"description": "A Svelte component for creating interactive custom cursors. Enhance user experience with customizable cursor effects and animations.",
 	"keywords": [
 		"svelte",
@@ -10,6 +10,8 @@
 		"svelte cursor",
 		"svelte component"
 	],
+	"author": "LoSti's World",
+	"license": "MIT",
 	"homepage": "https://github.com/LoStis-World/svelte-interactive-cursor#readme",
 	"bugs": {
 		"url": "https://github.com/LoStis-World/svelte-interactive-cursor/issues"
