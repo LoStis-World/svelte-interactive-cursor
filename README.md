@@ -33,12 +33,12 @@ The `InteractiveCursor` is a Svelte component that provides a customizable and i
 
 ### `interactiveStateItem`
 
-| Property      | Type      | Description                        |
-| ------------- | --------- | ---------------------------------- | ---------------------------------------------------------------- | ------- | ----------------------------------------------------------- |
-| `data`        | `'link'   | 'image'                            | 'video'                                                          | string` | Defines the type of interaction (e.g., link, image, video). |
-| `icon`        | `IconName | HTMLElement`                       | Icon or custom HTML element displayed when this state is active. |
-| `iconClass`   | `string`  | Additional classes for the icon.   |
-| `cursorClass` | `string`  | Additional classes for the cursor. |
+| Property      | Type       | Description                        |
+| ------------- | ---------- | ---------------------------------- | ---------------------------------------------------------------- | -------- | ----------------------------------------------------------- |
+| `data`        | `link`     | `image`                            | `video`                                                          | `string` | Defines the type of interaction (e.g., link, image, video). |
+| `icon`        | `IconName` | `HTMLElement`                      | Icon or custom HTML element displayed when this state is active. |
+| `iconClass`   | `string`   | Additional classes for the icon.   |
+| `cursorClass` | `string`   | Additional classes for the cursor. |
 
 ---
 
@@ -125,35 +125,6 @@ Customize the appearance using the provided classes or by overriding the styles:
 ---
 
 This documentation provides a complete overview of the `InteractiveCursor` component, making it easy to integrate and customize in your Svelte projects.
-
-# create-svelte
-
-Everything you need to build a Svelte library, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
-
-Read more about creating a library [in the docs](https://svelte.dev/docs/kit/packaging).
-
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
 
 Everything inside `src/lib` is part of your library, everything inside `src/routes` can be used as a showcase or preview app.
 
