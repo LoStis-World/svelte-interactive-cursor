@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { cn } from '$lib/utils.js';
 	import type { InteractiveCursorProps, interactiveStateItem } from './index.js';
 
 	// Props
@@ -128,14 +127,14 @@
 <div
 	bind:this={cursor}
 	style="--size:{defaultSize}px;"
-	class={cn(
+	class={[
 		'pointer-events-none fixed left-0 top-0 z-100',
 		'motion-safe:transition-all motion-safe:duration-500',
 		'flex size-[var(--size)] items-center justify-center rounded-full bg-white text-black',
 		isActive ? 'visible opacity-100' : 'invisible opacity-0',
 		classes,
 		setInteractiveState.find((state) => state.data === currentInteractiveState)?.cursorClass || ''
-	)}
+	]}
 	aria-hidden="true"
 >
 	{#each finalInteractiveStates as { icon, data }}
