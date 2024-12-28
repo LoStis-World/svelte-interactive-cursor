@@ -13,7 +13,6 @@ interface InteractiveCursorProps {
 	defaultSize?: number;
 	activeSizeMultiplicator?: number;
 	triggerAreas: string[] | HTMLElement[];
-	target?: HTMLElement | string;
 }
 
 export { InteractiveCursor, type InteractiveCursorProps, type interactiveStateItem };
