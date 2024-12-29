@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { InteractiveCursorProps, interactiveStateItem } from './index.js';
+	import type { InteractiveCursorProps } from './index.js';
 
 	// Props
 	let {
@@ -24,7 +24,7 @@
 	// Start cursor tracking
 	const startCursorTracking = (e: PointerEvent) => {
 		if (!cursor) return;
-		 
+
 		const target = e.target as HTMLElement;
 		pointerCords = {
 			x: e.clientX - cursor.offsetWidth / 2,
@@ -36,7 +36,7 @@
 		if (target.closest('[data-interactive-cursor]')) {
 			activeDataName =
 				target.closest('[data-interactive-cursor]')?.getAttribute('data-interactive-cursor') || '';
-				activeDataElement = target.closest('[data-interactive-cursor]');
+			activeDataElement = target.closest('[data-interactive-cursor]');
 		} else {
 			activeDataName = '';
 			activeDataElement = null;
@@ -83,14 +83,8 @@
 		// Remove event listeners on destroy
 		return () => {
 			triggerAreaElements?.forEach((triggerAreaElement) => {
-				triggerAreaElement?.removeEventListener(
-					'mousemove',
-					startCursorTracking as EventListener
-				);
-				triggerAreaElement?.removeEventListener(
-					'mouseleave',
-					stopCursorTracking as EventListener
-				);
+				triggerAreaElement?.removeEventListener('mousemove', startCursorTracking as EventListener);
+				triggerAreaElement?.removeEventListener('mouseleave', stopCursorTracking as EventListener);
 			});
 		};
 	});
@@ -130,4 +124,4 @@
 			transition: all 500ms cubic-bezier(0.4, 0, 0.2, 1);
 		}
 	}
-	</style>
+</style>
