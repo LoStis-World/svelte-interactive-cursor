@@ -26,8 +26,6 @@ pnpm add @lostisworld/svelte-interactive-cursor
 
 ---
 
----
-
 ## Usage
 
 Import the component into your Svelte project:
@@ -50,16 +48,16 @@ Import the component into your Svelte project:
 
 ## Props
 
-| Prop Name                 | Type         | Default        | Description                                                                                                 |
-| ------------------------- | ------------ | -------------- | ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `class`                   | `string`     | `undefined`    | Additional classes to style the cursor.                                                                     |
-| `activeDataName`          | `string`     | `''`           | A reactive prop holding the `data-interactive-cursor` attribute value of the currently active trigger area. |
-| `duration`                | `number`     | `500`          | Animation duration in milliseconds for the cursor's transitions.                                            |
-| `defaultSize`             | `number`     | `32`           | The default size of the cursor in pixels.                                                                   |
-| `activeSizeMultiplicator` | `number`     | `3`            | Scale factor applied to the cursor when it becomes active.                                                  |
-| `triggerAreas`            | `string[]    | HTMLElement[]` | `undefined`                                                                                                 | CSS selectors or DOM elements that define the areas where the cursor effect is active.    |
-| `children`                | `Snippet`    | `undefined`    | Content to render inside the cursor (e.g., custom icons or text).                                           |
-| `activeDataElement`       | `HTMLElement | null`          | `null`                                                                                                      | A reactive prop holding the DOM element associated with the current trigger area, if any. |
+| Prop Name                 | Type                     | Default     | Description                                                                                                 |
+| ------------------------- | ------------------------ | ----------- | ----------------------------------------------------------------------------------------------------------- |
+| `class`                   | `string`                 | `undefined` | Additional classes to style the cursor.                                                                     |
+| `activeDataName`          | `$bindable(string)`      | `''`        | A reactive prop holding the `data-interactive-cursor` attribute value of the currently active trigger area. |
+| `duration`                | `number`                 | `500`       | Animation duration in milliseconds for the cursor's transitions.                                            |
+| `defaultSize`             | `number`                 | `32`        | The default size of the cursor in pixels.                                                                   |
+| `activeSizeMultiplicator` | `number`                 | `3`         | Scale factor applied to the cursor when it becomes active.                                                  |
+| `triggerAreas`            | `string[]`               | `[]`        | CSS selectors or DOM elements that define the areas where the cursor effect is active.                      |
+| `children`                | `Snippet`                | `undefined` | Content to render inside the cursor (e.g., custom icons or text).                                           |
+| `activeDataElement`       | `$bindable(HTMLElement)` | `null`      | A reactive prop holding the DOM element associated with the current trigger area, if any.                   |
 
 ---
 
