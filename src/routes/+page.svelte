@@ -1,6 +1,8 @@
-<script>
-	import InteractiveCursor from '$lib/interactive-cursor.svelte';
+<script lang="ts">
+	import InteractiveCursor from '$lib/interactive-cursor/interactive-cursor.svelte';
 
+	let currentCursorState = $state('')
+	
 	const triggerAreas = ['#triggersection'];
 	const customCursorProps = [
 		{
@@ -20,7 +22,7 @@
 	]
 </script>
 
-<div class="grid grid-rows-[auto_1fr] p-8">
+<div class="grid grid-rows-[auto_1fr] p-8 min-h-screen">
 
 	<section class="py-8">
 		<h2 class="font-semibold text-2xl">
@@ -51,5 +53,12 @@
 
 <InteractiveCursor 
 	{triggerAreas} 
-	setInteractiveState={customCursorProps}
-/>
+	bind:activeDataName={currentCursorState}
+	class="rounded-full {currentCursorState === '' ? 'bg-white text-black' : customCursorProps.find(state => state.data === currentCursorState)?.cursorClass || 'bg-white text-black'}"
+>
+	{#each customCursorProps as { icon, data }}
+		{#if data === currentCursorState && icon}
+			{@html icon}
+		{/if}
+	{/each}
+</InteractiveCursor>

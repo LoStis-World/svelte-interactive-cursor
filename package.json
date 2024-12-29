@@ -1,6 +1,6 @@
 {
 	"name": "@lostisworld/svelte-interactive-cursor",
-	"version": "0.0.12",
+	"version": "0.1.0",
 	"description": "A Svelte component for creating interactive custom cursors. Enhance user experience with customizable cursor effects and animations.",
 	"keywords": [
 		"svelte",
@@ -32,20 +32,20 @@
 		"lint": "prettier --check ."
 	},
 	"files": [
-		"dist",
+		"dist/interactive-cursor",
 		"!dist/**/*.test.*",
 		"!dist/**/*.spec.*"
 	],
 	"sideEffects": [
 		"**/*.css"
 	],
-	"svelte": "./dist/index.js",
-	"types": "./dist/index.d.ts",
+	"svelte": "./dist/interactive-cursor/index.js",
+	"types": "./dist/interactive-cursor/index.d.ts",
 	"type": "module",
 	"exports": {
 		".": {
-			"types": "./dist/index.d.ts",
-			"svelte": "./dist/index.js"
+			"types": "./dist/interactive-cursor/index.d.ts",
+			"svelte": "./dist/interactive-cursor/index.js"
 		}
 	},
 	"peerDependencies": {

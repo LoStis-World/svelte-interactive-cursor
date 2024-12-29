@@ -1,20 +1,17 @@
 import InteractiveCursor from './interactive-cursor.svelte';
-
-type interactiveStateItem = {
-	data: 'link' | 'image' | 'video' | string;
-	icon?: string | HTMLElement;
-	cursorClass?: string;
-};
+import { type Snippet } from 'svelte';
 
 interface InteractiveCursorProps {
 	class?: string;
-	setInteractiveState?: interactiveStateItem[];
+	activeDataName?: string;
 	duration?: number;
 	defaultSize?: number;
 	activeSizeMultiplicator?: number;
 	triggerAreas: string[] | HTMLElement[];
+	children?: Snippet;
+	activeDataElement?: HTMLElement | null;
 }
 
 export default InteractiveCursor;
 
-export { type InteractiveCursorProps, type interactiveStateItem };
+export { type InteractiveCursorProps };
