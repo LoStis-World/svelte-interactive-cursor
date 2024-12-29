@@ -204,4 +204,4 @@ Contributions are welcome! Please ensure all changes are well-documented and tes
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [MIT License](https://github.com/LoStis-World/svelte-interactive-cursor/blob/main/LICENCE).
