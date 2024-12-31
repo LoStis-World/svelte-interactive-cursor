@@ -10,6 +10,7 @@
 		defaultSize = 32,
 		activeDataName = $bindable(''),
 		activeDataElement = $bindable(null),
+		useDataElementRect,
 		children
 	}: InteractiveCursorProps = $props();
 
@@ -30,22 +31,49 @@
 			x: e.clientX - cursor.offsetWidth / 2,
 			y: e.clientY - cursor.offsetHeight / 2 + window.scrollY
 		};
+
+		// toggle active state
 		isActive = true;
+
+		// get active element bounding rect
+		let dataElementRect = { x: 0, y: 0, width: 0, height: 0 };
 
 		// check if target has interactive cursor data attribute
 		if (target.closest('[data-interactive-cursor]')) {
 			activeDataName =
 				target.closest('[data-interactive-cursor]')?.getAttribute('data-interactive-cursor') || '';
 			activeDataElement = target.closest('[data-interactive-cursor]');
+			if (useDataElementRect?.includes(activeDataName)) {
+				dataElementRect = activeDataElement?.getBoundingClientRect() || {
+					x: 0,
+					y: 0,
+					width: 0,
+					height: 0
+				};
+			}
 		} else {
 			activeDataName = '';
 			activeDataElement = null;
 		}
 
 		// Get cursor element and set animation options
-		const animationKeyframes = {
-			transform: `translate3D(${pointerCords.x}px, ${pointerCords.y}px, 0) scale3D(${activeDataName !== '' ? activeSizeMultiplicator : 1}, ${activeDataName !== '' ? activeSizeMultiplicator : 1}, 1)`
-		};
+		const animationKeyframes = useDataElementRect?.includes(activeDataName)
+			? [
+					{ top: `${dataElementRect.y}px` },
+					{ left: `${dataElementRect.x}px` },
+					{ width: `${dataElementRect.width}px` },
+					{ height: `${dataElementRect.height}px` },
+					{
+						transform: `translate3D(0, 0, 0) scale3D(1,1,1)`
+					}
+				]
+			: [
+					{ width: `${defaultSize}px` },
+					{ height: `${defaultSize}px` },
+					{
+						transform: `translate3D(${pointerCords.x}px, ${pointerCords.y}px, 0) scale3D(${activeDataName !== '' ? activeSizeMultiplicator : 1}, ${activeDataName !== '' ? activeSizeMultiplicator : 1}, 1)`
+					}
+				];
 
 		const animationTiming: KeyframeAnimationOptions = {
 			duration: duration,

@@ -10,8 +10,8 @@ interface InteractiveCursorProps {
 	triggerAreas: string[] | HTMLElement[];
 	children?: Snippet;
 	activeDataElement?: HTMLElement | null;
+	useDataElementRect?: string[];
 }
 
 export default InteractiveCursor;
-
 export { type InteractiveCursorProps };
