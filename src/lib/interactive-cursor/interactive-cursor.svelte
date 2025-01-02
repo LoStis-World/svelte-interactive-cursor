@@ -36,23 +36,12 @@
 		// toggle active state
 		isActive = true;
 
-		// get active element bounding rect
-		let dataElementRect = { x: 0, y: 0, width: 0, height: 0 };
-
 		// check if target has interactive cursor data attribute
 		if (target.closest('[data-interactive-cursor]')) {
 			activeDataName =
 				target.closest('[data-interactive-cursor]')?.getAttribute('data-interactive-cursor') || '';
 			activeDataElement = target.closest('[data-interactive-cursor]');
-			if (useDataElementRect?.includes(activeDataName)) {
-				isHoveringDataElementRect = true;
-				dataElementRect = activeDataElement?.getBoundingClientRect() || {
-					x: 0,
-					y: 0,
-					width: 0,
-					height: 0
-				};
-			}
+			isHoveringDataElementRect = useDataElementRect?.includes(activeDataName) || false;
 		} else {
 			activeDataName = '';
 			activeDataElement = null;
@@ -60,11 +49,11 @@
 		}
 
 		// Get cursor element and set animation options
-		const animationKeyframes = useDataElementRect?.includes(activeDataName)
+		const animationKeyframes = isHoveringDataElementRect
 			? {
-					transform: `translate3D(${dataElementRect.x}px, ${dataElementRect.y}px, 0) scale3D(1,1,1)`,
-					width: `${dataElementRect.width}px`,
-					height: `${dataElementRect.height}px`
+					transform: `translate3D(${activeDataElement?.getBoundingClientRect().left}px, ${activeDataElement?.getBoundingClientRect().top}px, 0) scale3D(1,1,1)`,
+					width: `${activeDataElement?.getBoundingClientRect().width}px`,
+					height: `${activeDataElement?.getBoundingClientRect().height}px`
 				}
 			: {
 					width: `${defaultSize}px`,
@@ -73,7 +62,7 @@
 				};
 
 		const animationTiming: KeyframeAnimationOptions = {
-			duration: duration,
+			duration: isHoveringDataElementRect ? 50 : duration,
 			fill: 'forwards' as FillMode
 		};
 
@@ -85,6 +74,7 @@
 	const stopCursorTracking = () => {
 		pointerCords = { x: 0, y: 0 };
 		isActive = false;
+		isHoveringDataElementRect = false;
 	};
 
 	$effect(() => {
@@ -130,7 +120,7 @@
 		position: fixed;
 		top: 0;
 		left: 0;
-		z-index: 100;
+		z-index: 999;
 		pointer-events: none;
 		display: flex;
 		justify-content: center;
@@ -139,6 +129,7 @@
 		height: var(--size);
 		opacity: 0;
 		visibility: hidden;
+		will-change: transform, width, height;
 	}
 	.lw-interactive-cursor.active {
 		opacity: 1;

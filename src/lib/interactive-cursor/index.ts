@@ -13,5 +13,10 @@ interface InteractiveCursorProps {
 	useDataElementRect?: string[];
 }
 
+type PointerCoords = {
+	x: number;
+	y: number;
+};
+
 export default InteractiveCursor;
-export { type InteractiveCursorProps };
+export type { InteractiveCursorProps, PointerCoords };
