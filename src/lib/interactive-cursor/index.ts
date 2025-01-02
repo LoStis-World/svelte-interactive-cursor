@@ -13,4 +13,4 @@ interface InteractiveCursorProps {
 }
 
 export default InteractiveCursor;
-export { type InteractiveCursorProps };
+export type { InteractiveCursorProps };

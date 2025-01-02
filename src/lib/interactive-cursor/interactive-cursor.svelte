@@ -1,5 +1,9 @@
 <script lang="ts">
 	import type { InteractiveCursorProps } from './index.js';
+	import {
+		InteractiveCursorClass,
+		type InteractiveCursorClassProps
+	} from './interactiveCursor.svelte.js';
 
 	// Props
 	let {
@@ -9,102 +13,29 @@
 		defaultSize = 32,
 		activeDataName = $bindable(''),
 		activeDataElement = $bindable(null),
-		useDataElementRect,
+		useDataElementRect = [],
 		children
 	}: InteractiveCursorProps = $props();
 
-	// Reactive state
-	let pointerCords = $state({ x: 0, y: 0 });
-	let isActive = $state(false);
-	let isHoveringDataElementRect = $state(false);
-
-	// DOM elements
-	let cursor: HTMLDivElement | null;
-
-	// Start cursor tracking
-	const startCursorTracking = (e: PointerEvent) => {
-		if (!cursor) return;
-
-		const target = e.target as HTMLElement;
-		pointerCords = {
-			x: e.clientX - cursor.offsetWidth / 2,
-			y: e.clientY - cursor.offsetHeight / 2 + window.scrollY
-		};
-
-		// toggle active state
-		isActive = true;
-
-		// get active element bounding rect
-		let dataElementRect = { x: 0, y: 0, width: 0, height: 0 };
-
-		// check if target has interactive cursor data attribute
-		if (target.closest('[data-interactive-cursor]')) {
-			activeDataName =
-				target.closest('[data-interactive-cursor]')?.getAttribute('data-interactive-cursor') || '';
-			activeDataElement = target.closest('[data-interactive-cursor]');
-			if (useDataElementRect?.includes(activeDataName)) {
-				isHoveringDataElementRect = true;
-				dataElementRect = activeDataElement?.getBoundingClientRect() || {
-					x: 0,
-					y: 0,
-					width: 0,
-					height: 0
-				};
-			}
-		} else {
-			activeDataName = '';
-			activeDataElement = null;
-			isHoveringDataElementRect = false;
-		}
-
-		// Get cursor element and set animation options
-		const animationKeyframes = useDataElementRect?.includes(activeDataName)
-			? {
-					transform: `translate3D(${dataElementRect.x}px, ${dataElementRect.y}px, 0) scale3D(1,1,1)`,
-					width: `${dataElementRect.width}px`,
-					height: `${dataElementRect.height}px`
-				}
-			: {
-					width: `${defaultSize}px`,
-					height: `${defaultSize}px`,
-					transform: `translate3D(${pointerCords.x}px, ${pointerCords.y}px, 0) scale3D(${activeDataName !== '' ? activeSizeMultiplicator : 1}, ${activeDataName !== '' ? activeSizeMultiplicator : 1}, 1)`
-				};
-
-		const animationTiming: KeyframeAnimationOptions = {
-			duration: duration,
-			fill: 'forwards' as FillMode
-		};
-
-		// Animate cursor
-		cursor.animate(animationKeyframes, animationTiming);
-	};
-
-	// Stop cursor tracking
-	const stopCursorTracking = () => {
-		pointerCords = { x: 0, y: 0 };
-		isActive = false;
-	};
+	let cursor: HTMLDivElement;
 
 	$effect(() => {
-		const triggerAreas = document.querySelectorAll('[data-interactive-cursor-trigger]');
-		// check if trigger areas exist or if user prefers reduced motion
-		if (!triggerAreas || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+		// Initialize the
+		if (!cursor) return;
 
-		// Add event listeners
-		triggerAreas.forEach((triggerAreaElement) => {
-			triggerAreaElement?.addEventListener('mousemove', startCursorTracking as EventListener, {
-				passive: true
-			});
-			triggerAreaElement?.addEventListener('mouseleave', stopCursorTracking as EventListener);
-		});
+		const interactiveCursor = new InteractiveCursorClass({
+			cursor,
+			triggerAreas: document.querySelectorAll('[data-interactive-cursor-trigger]'),
+			duration,
+			activeSizeMultiplicator,
+			defaultSize,
+			useDataElementRect
+		} as InteractiveCursorClassProps);
 
+		// Initialize the cursor
+		interactiveCursor.init();
 		// Remove event listeners on destroy
-		return () => {
-			triggerAreas.forEach((triggerAreaElement) => {
-				triggerAreaElement?.removeEventListener('mousemove', startCursorTracking as EventListener);
-				triggerAreaElement?.removeEventListener('mouseleave', stopCursorTracking as EventListener);
-			});
-		};
+		return () => interactiveCursor.destroy();
 	});
 </script>
 
@@ -112,7 +43,6 @@
 	bind:this={cursor}
 	style="--size:{defaultSize}px;"
 	class="lw-interactive-cursor {classes}"
-	class:active={isActive}
 	aria-hidden="true"
 >
 	{@render children?.()}

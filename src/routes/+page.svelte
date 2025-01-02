@@ -3,7 +3,6 @@
 
 	let currentCursorState = $state('');
 
-	const triggerAreas = ['#triggersection'];
 	const customCursorProps = [
 		{
 			data: 'image',
@@ -31,7 +30,7 @@
 	</section>
 
 	<section
-		id="triggersection"
+		data-interactive-cursor-trigger
 		class="flex flex-wrap justify-center items-center gap-8 2xl:gap-16 p-16 border border-green-500"
 	>
 		<div class="min-w-full">
@@ -68,7 +67,6 @@
 </div>
 
 <InteractiveCursor
-	{triggerAreas}
 	bind:activeDataName={currentCursorState}
 	useDataElementRect={['tablist']}
 	class="rounded-full {currentCursorState === ''
