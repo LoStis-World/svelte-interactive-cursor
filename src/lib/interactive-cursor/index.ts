@@ -7,7 +7,6 @@ interface InteractiveCursorProps {
 	duration?: number;
 	defaultSize?: number;
 	activeSizeMultiplicator?: number;
-	triggerAreas: string[] | HTMLElement[];
 	children?: Snippet;
 	activeDataElement?: HTMLElement | null;
 	useDataElementRect?: string[];

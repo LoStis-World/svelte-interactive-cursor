@@ -5,7 +5,6 @@
 	let {
 		class: classes,
 		duration = 500,
-		triggerAreas,
 		activeSizeMultiplicator = 3,
 		defaultSize = 32,
 		activeDataName = $bindable(''),
@@ -21,7 +20,6 @@
 
 	// DOM elements
 	let cursor: HTMLDivElement | null;
-	let triggerAreaElements: HTMLElement[] | null;
 
 	// Start cursor tracking
 	const startCursorTracking = (e: PointerEvent) => {
@@ -88,17 +86,12 @@
 	};
 
 	$effect(() => {
+		const triggerAreas = document.querySelectorAll('[data-interactive-cursor-trigger]');
+		// check if trigger areas exist or if user prefers reduced motion
 		if (!triggerAreas || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-		// Set triggerAreas elements as array of HTMLElements
-		triggerAreaElements = (
-			triggerAreas.map((area) =>
-				typeof area === 'string' ? document.querySelector(area as string) : (area as HTMLElement)
-			) || []
-		).filter((el): el is HTMLElement => el !== null);
-
 		// Add event listeners
-		triggerAreaElements?.forEach((triggerAreaElement) => {
+		triggerAreas.forEach((triggerAreaElement) => {
 			triggerAreaElement?.addEventListener('mousemove', startCursorTracking as EventListener, {
 				passive: true
 			});
@@ -107,7 +100,7 @@
 
 		// Remove event listeners on destroy
 		return () => {
-			triggerAreaElements?.forEach((triggerAreaElement) => {
+			triggerAreas.forEach((triggerAreaElement) => {
 				triggerAreaElement?.removeEventListener('mousemove', startCursorTracking as EventListener);
 				triggerAreaElement?.removeEventListener('mouseleave', stopCursorTracking as EventListener);
 			});
