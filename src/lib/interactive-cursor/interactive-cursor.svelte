@@ -17,6 +17,7 @@
 	// Reactive state
 	let pointerCords = $state({ x: 0, y: 0 });
 	let isActive = $state(false);
+	let isHoveringDataElementRect = $state(false);
 
 	// DOM elements
 	let cursor: HTMLDivElement | null;
@@ -44,6 +45,7 @@
 				target.closest('[data-interactive-cursor]')?.getAttribute('data-interactive-cursor') || '';
 			activeDataElement = target.closest('[data-interactive-cursor]');
 			if (useDataElementRect?.includes(activeDataName)) {
+				isHoveringDataElementRect = true;
 				dataElementRect = activeDataElement?.getBoundingClientRect() || {
 					x: 0,
 					y: 0,
@@ -54,26 +56,21 @@
 		} else {
 			activeDataName = '';
 			activeDataElement = null;
+			isHoveringDataElementRect = false;
 		}
 
 		// Get cursor element and set animation options
 		const animationKeyframes = useDataElementRect?.includes(activeDataName)
-			? [
-					{ top: `${dataElementRect.y}px` },
-					{ left: `${dataElementRect.x}px` },
-					{ width: `${dataElementRect.width}px` },
-					{ height: `${dataElementRect.height}px` },
-					{
-						transform: `translate3D(0, 0, 0) scale3D(1,1,1)`
-					}
-				]
-			: [
-					{ width: `${defaultSize}px` },
-					{ height: `${defaultSize}px` },
-					{
-						transform: `translate3D(${pointerCords.x}px, ${pointerCords.y}px, 0) scale3D(${activeDataName !== '' ? activeSizeMultiplicator : 1}, ${activeDataName !== '' ? activeSizeMultiplicator : 1}, 1)`
-					}
-				];
+			? {
+					transform: `translate3D(${dataElementRect.x}px, ${dataElementRect.y}px, 0) scale3D(1,1,1)`,
+					width: `${dataElementRect.width}px`,
+					height: `${dataElementRect.height}px`
+				}
+			: {
+					width: `${defaultSize}px`,
+					height: `${defaultSize}px`,
+					transform: `translate3D(${pointerCords.x}px, ${pointerCords.y}px, 0) scale3D(${activeDataName !== '' ? activeSizeMultiplicator : 1}, ${activeDataName !== '' ? activeSizeMultiplicator : 1}, 1)`
+				};
 
 		const animationTiming: KeyframeAnimationOptions = {
 			duration: duration,
