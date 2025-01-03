@@ -30,7 +30,7 @@
 	</section>
 
 	<section
-		data-interactive-cursor-trigger
+		data-interactive-cursor-area
 		class="flex flex-wrap justify-center items-center gap-8 2xl:gap-16 p-16 border border-green-500"
 	>
 		<div class="min-w-full">

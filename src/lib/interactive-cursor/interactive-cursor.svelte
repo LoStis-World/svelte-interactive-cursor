@@ -1,9 +1,15 @@
 <script lang="ts">
-	import type { InteractiveCursorProps } from './index.js';
+	import type { Snippet } from 'svelte';
 	import {
 		InteractiveCursorClass,
 		type InteractiveCursorClassProps
 	} from './interactiveCursor.svelte.js';
+
+
+	interface Props extends InteractiveCursorClassProps {
+		class?: string;
+		children?: Snippet;
+	}
 
 	// Props
 	let {
@@ -11,13 +17,13 @@
 		duration = 500,
 		activeSizeMultiplicator = 3,
 		defaultSize = 32,
-		activeDataName = $bindable(''),
-		activeDataElement = $bindable(null),
 		useDataElementRect = [],
 		children
-	}: InteractiveCursorProps = $props();
+	}: Props = $props();
 
 	let cursor: HTMLDivElement;
+	let activeDataElement: HTMLElement | null = $state(null)
+	let activeDataName: string = $state('');
 
 	$effect(() => {
 		// Initialize the
@@ -25,7 +31,7 @@
 
 		const interactiveCursor = new InteractiveCursorClass({
 			cursor,
-			triggerAreas: document.querySelectorAll('[data-interactive-cursor-trigger]'),
+			triggerAreas: document.querySelectorAll('[data-interactive-cursor-area]'),
 			duration,
 			activeSizeMultiplicator,
 			defaultSize,

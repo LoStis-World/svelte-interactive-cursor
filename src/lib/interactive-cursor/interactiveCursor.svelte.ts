@@ -51,10 +51,10 @@ export class InteractiveCursorClass {
 		console.log(this.cursor);
 		// Add event listeners
 		this.triggerAreas.forEach((triggerAreaElement) => {
-			triggerAreaElement.addEventListener('mousemove', this.startCursorTracking as EventListener, {
+			triggerAreaElement.addEventListener('mousemove', this.startCursorTracking.bind(this) as EventListener, {
 				passive: true
 			});
-			triggerAreaElement.addEventListener('mouseleave', this.stopCursorTracking as EventListener);
+			triggerAreaElement.addEventListener('mouseleave', this.stopCursorTracking.bind(this) as EventListener);
 		});
 	}
 
