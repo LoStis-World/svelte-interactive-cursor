@@ -1,5 +1,5 @@
 <script lang="ts">
-	import InteractiveCursor from '$lib/interactive-cursor/interactive-cursor.svelte';
+	import InteractiveCursor from '$lib/interactive-cursor/_interactive-cursor.svelte';
 
 	let currentCursorState = $state('');
 
@@ -67,7 +67,6 @@
 </div>
 
 <InteractiveCursor
-	bind:activeDataName={currentCursorState}
 	useDataElementRect={['tablist']}
 	class="rounded-full {currentCursorState === ''
 		? 'bg-white text-black'

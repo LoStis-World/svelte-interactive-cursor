@@ -3,7 +3,6 @@ export interface InteractiveCursorClassProps {
 	activeSizeMultiplicator?: number;
 	duration?: number;
 	useDataElementRect?: string[];
-	triggerAreas: NodeListOf<HTMLElement>;
 	cursor: HTMLElement | null;
 }
 
@@ -16,14 +15,14 @@ export class InteractiveCursorClass {
 	private pointerCoords = $state<PointerCoords>({ x: 0, y: 0 });
 	private isActive = $state(false);
 	private isHoveringDataElementRect = $state(false);
-	private activeDataElement = $state<HTMLElement | null>(null);
-	private activeDataName = $state('');
+	activeDataElement = $state<HTMLElement | null>(null);
+	activeDataName = $state('');
 	defaultSize: number;
 	activeSizeMultiplicator: number;
 	duration: number;
 	useDataElementRect: string[];
-	triggerAreas: NodeListOf<HTMLElement>;
 	cursor: HTMLElement | null;
+	triggerAreas: NodeListOf<Element>;
 
 	constructor(props: InteractiveCursorClassProps) {
 		const {
@@ -31,7 +30,6 @@ export class InteractiveCursorClass {
 			activeSizeMultiplicator = 2,
 			duration = 0.3,
 			useDataElementRect = [],
-			triggerAreas,
 			cursor = null
 		} = props;
 
@@ -39,7 +37,7 @@ export class InteractiveCursorClass {
 		this.activeSizeMultiplicator = activeSizeMultiplicator;
 		this.duration = duration;
 		this.useDataElementRect = useDataElementRect;
-		this.triggerAreas = triggerAreas;
+		this.triggerAreas = document.querySelectorAll('[data-interactive-cursor-area]');
 		this.cursor = cursor;
 	}
 
@@ -48,20 +46,27 @@ export class InteractiveCursorClass {
 		if (!this.triggerAreas || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
 			return;
 		}
-		console.log(this.cursor);
+
 		// Add event listeners
 		this.triggerAreas.forEach((triggerAreaElement) => {
-			triggerAreaElement.addEventListener('mousemove', this.startCursorTracking.bind(this) as EventListener, {
-				passive: true
-			});
-			triggerAreaElement.addEventListener('mouseleave', this.stopCursorTracking.bind(this) as EventListener);
+			triggerAreaElement.addEventListener(
+				'mousemove',
+				this.startCursorTracking.bind(this) as EventListener,
+				{
+					passive: true
+				}
+			);
+			triggerAreaElement.addEventListener(
+				'mouseleave',
+				this.stopCursorTracking.bind(this) as EventListener
+			);
 		});
 	}
 
 	// This method is called when the mouse moves over the trigger area
 	private startCursorTracking(e: MouseEvent) {
-		console.log(this.cursor);
 		if (!this.cursor) return;
+
 		// Get the active data element
 		const target = e.target as HTMLElement;
 		this.pointerCoords = {
@@ -74,9 +79,9 @@ export class InteractiveCursorClass {
 
 		// Check if the mouse is hovering over a data element
 		if (target.closest('[data-interactive-cursor]')) {
-			this.activeDataName =
-				target.closest('[data-interactive-cursor]')?.getAttribute('data-interactive-cursor') || '';
-			this.activeDataElement = target.closest('[data-interactive-cursor]');
+			const dataElement = target.closest('[data-interactive-cursor]');
+			this.activeDataName = dataElement?.getAttribute('data-interactive-cursor') || '';
+			this.activeDataElement = dataElement as HTMLElement;
 			this.isHoveringDataElementRect = this.useDataElementRect?.includes(this.activeDataName);
 		} else {
 			this.activeDataName = '';
@@ -86,11 +91,6 @@ export class InteractiveCursorClass {
 
 		// Update cursor animation
 		this.cursor.classList.toggle('active', this.isActive);
-		this.updateCursorAnimation();
-	}
-
-	private updateCursorAnimation() {
-		if (!this.cursor) return;
 
 		// get active data element rect
 		const dataElementRect = this.activeDataElement?.getBoundingClientRect();
@@ -110,7 +110,8 @@ export class InteractiveCursorClass {
 
 		const animationTiming: KeyframeAnimationOptions = {
 			duration: this.isHoveringDataElementRect ? 50 : this.duration,
-			fill: 'forwards' as FillMode
+			fill: 'forwards' as FillMode,
+			easing: 'linear'
 		};
 
 		// Animate cursor

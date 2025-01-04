@@ -1,57 +1,38 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import {
-		InteractiveCursorClass,
-		type InteractiveCursorClassProps
-	} from './interactiveCursor.svelte.js';
-
-
-	interface Props extends InteractiveCursorClassProps {
-		class?: string;
-		children?: Snippet;
-	}
-
-	// Props
-	let {
-		class: classes,
-		duration = 500,
-		activeSizeMultiplicator = 3,
-		defaultSize = 32,
-		useDataElementRect = [],
-		children
-	}: Props = $props();
+	import { InteractiveCursorClass, type CursorStateChange } from './InteractiveCursorClass.svelte';
 
 	let cursor: HTMLDivElement;
-	let activeDataElement: HTMLElement | null = $state(null)
-	let activeDataName: string = $state('');
+	let activeDataElement = $state<HTMLElement | null>(null);
+	let activeDataName = $state('');
+
+	const props = $props<{
+		defaultSize?: number;
+		activeSizeMultiplicator?: number;
+		duration?: number;
+		useDataElementRect?: string[];
+		class?: string;
+		children?: Snippet;
+	}>();
 
 	$effect(() => {
-		// Initialize the
-		if (!cursor) return;
-
-		const interactiveCursor = new InteractiveCursorClass({
+		const cursorInstance = new InteractiveCursorClass({
 			cursor,
-			triggerAreas: document.querySelectorAll('[data-interactive-cursor-area]'),
-			duration,
-			activeSizeMultiplicator,
-			defaultSize,
-			useDataElementRect
-		} as InteractiveCursorClassProps);
+			...props
+		});
 
-		// Initialize the cursor
-		interactiveCursor.init();
-		// Remove event listeners on destroy
-		return () => interactiveCursor.destroy();
+		cursorInstance.init();
+		return () => cursorInstance.destroy();
 	});
 </script>
 
 <div
 	bind:this={cursor}
-	style="--size:{defaultSize}px;"
-	class="lw-interactive-cursor {classes}"
+	style="--size:{props.defaultSize ?? 20}px;"
+	class="lw-interactive-cursor {props.class}"
 	aria-hidden="true"
 >
-	{@render children?.()}
+	{@render props.children?.()}
 </div>
 
 <style>
@@ -61,9 +42,6 @@
 		left: 0;
 		z-index: 100;
 		pointer-events: none;
-		display: flex;
-		justify-content: center;
-		align-items: center;
 		width: var(--size);
 		height: var(--size);
 		opacity: 0;
