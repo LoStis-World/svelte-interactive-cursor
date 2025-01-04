@@ -1,38 +1,67 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { InteractiveCursorClass, type CursorStateChange } from './InteractiveCursorClass.svelte';
+	import { type InteractiveCursorOptions, interactiveCursor } from './interactiveCursor.svelte.js';
 
-	let cursor: HTMLDivElement;
-	let activeDataElement = $state<HTMLElement | null>(null);
-	let activeDataName = $state('');
-
-	const props = $props<{
-		defaultSize?: number;
-		activeSizeMultiplicator?: number;
-		duration?: number;
-		useDataElementRect?: string[];
+	interface Props extends InteractiveCursorOptions {
 		class?: string;
 		children?: Snippet;
-	}>();
+	}
+
+	let {
+		activeSizeMultiplicator,
+		defaultSize,
+		duration,
+		useDataElementRect,
+		class: classes,
+		children
+	}: Props = $props();
+
+	// DOM element reference
+	let cursor: HTMLDivElement;
+	let initialCursor: ReturnType<typeof interactiveCursor> | undefined;
+	// Dynamic cursor instance
+	let activeDataElement = $state<HTMLElement | null>(null);
+	let activeDataName = $state('');
+	let isActive = $derived.by(() => initialCursor?.isActive ?? false);
+
+	$inspect({ activeDataElement, activeDataName, isActive });
 
 	$effect(() => {
-		const cursorInstance = new InteractiveCursorClass({
-			cursor,
-			...props
+		if (!document.querySelector('[data-interactive-cursor-area]')) return;
+
+		import('./interactiveCursor.svelte.js').then(({ interactiveCursor }) => {
+			const options: InteractiveCursorOptions = {
+				defaultSize,
+				activeSizeMultiplicator,
+				duration,
+				useDataElementRect
+			};
+
+			initialCursor = interactiveCursor(cursor, options);
+			initialCursor?.init();
+
+			// Update activeDataElement and activeDataName when cursor state changes
+			$derived.by(() => {
+				if (!initialCursor) return;
+				activeDataElement = initialCursor.activeDataElement;
+				activeDataName = initialCursor.activeDataName;
+			});
 		});
 
-		cursorInstance.init();
-		return () => cursorInstance.destroy();
+		return () => {
+			initialCursor?.destroy();
+		};
 	});
 </script>
 
 <div
 	bind:this={cursor}
-	style="--size:{props.defaultSize ?? 20}px;"
-	class="lw-interactive-cursor {props.class}"
+	style="--size:{defaultSize ?? 24}px;"
+	class="lw-interactive-cursor {classes}"
+	class:active={isActive}
 	aria-hidden="true"
 >
-	{@render props.children?.()}
+	{@render children?.()}
 </div>
 
 <style>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import InteractiveCursor from '$lib/interactive-cursor/_interactive-cursor.svelte';
+	import InteractiveCursor from '$lib/interactive-cursor/index.js';
 
 	let currentCursorState = $state('');
 

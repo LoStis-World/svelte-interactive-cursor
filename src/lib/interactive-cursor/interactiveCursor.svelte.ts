@@ -1,141 +1,133 @@
-export interface InteractiveCursorClassProps {
+interface InteractiveCursorOptions {
 	defaultSize?: number;
 	activeSizeMultiplicator?: number;
 	duration?: number;
 	useDataElementRect?: string[];
-	cursor: HTMLElement | null;
 }
 
-type PointerCoords = {
-	x: number;
-	y: number;
+type CursorState = {
+	pointerCoords: { x: number; y: number };
+	isActive: boolean;
+	isHoveringDataElementRect: boolean;
+	activeDataElement: HTMLElement | null;
+	activeDataName: string;
+	dataElementRect: DOMRect | null;
 };
 
-export class InteractiveCursorClass {
-	private pointerCoords = $state<PointerCoords>({ x: 0, y: 0 });
-	private isActive = $state(false);
-	private isHoveringDataElementRect = $state(false);
-	activeDataElement = $state<HTMLElement | null>(null);
-	activeDataName = $state('');
-	defaultSize: number;
-	activeSizeMultiplicator: number;
-	duration: number;
-	useDataElementRect: string[];
-	cursor: HTMLElement | null;
-	triggerAreas: NodeListOf<Element>;
+const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOptions) => {
+	// check if cursor is available and if reduced motion is enabled
+	if (!cursor || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-	constructor(props: InteractiveCursorClassProps) {
-		const {
-			defaultSize = 20,
-			activeSizeMultiplicator = 2,
-			duration = 0.3,
-			useDataElementRect = [],
-			cursor = null
-		} = props;
+	// set default cursor options
+	const {
+		defaultSize = 20,
+		activeSizeMultiplicator = 2,
+		duration = 300,
+		useDataElementRect = []
+	} = options;
 
-		this.defaultSize = defaultSize;
-		this.activeSizeMultiplicator = activeSizeMultiplicator;
-		this.duration = duration;
-		this.useDataElementRect = useDataElementRect;
-		this.triggerAreas = document.querySelectorAll('[data-interactive-cursor-area]');
-		this.cursor = cursor;
-	}
+	// set initial state
+	const state = $state<CursorState>({
+		pointerCoords: { x: 0, y: 0 },
+		isActive: false,
+		isHoveringDataElementRect: false,
+		activeDataElement: null,
+		activeDataName: '',
+		dataElementRect: null
+	});
 
-	// Call this method in the svelte component to add event listeners
-	init() {
-		if (!this.triggerAreas || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-			return;
-		}
+	let currentAnimation: Animation | undefined;
+	const triggerAreas = document.querySelectorAll<HTMLElement>('[data-interactive-cursor-area]');
 
-		// Add event listeners
-		this.triggerAreas.forEach((triggerAreaElement) => {
-			triggerAreaElement.addEventListener(
-				'mousemove',
-				this.startCursorTracking.bind(this) as EventListener,
-				{
-					passive: true
-				}
-			);
-			triggerAreaElement.addEventListener(
-				'mouseleave',
-				this.stopCursorTracking.bind(this) as EventListener
-			);
-		});
-	}
-
-	// This method is called when the mouse moves over the trigger area
-	private startCursorTracking(e: MouseEvent) {
-		if (!this.cursor) return;
-
-		// Get the active data element
-		const target = e.target as HTMLElement;
-		this.pointerCoords = {
-			x: e.clientX - this.cursor.offsetWidth / 2,
-			y: e.clientY - this.cursor.offsetHeight / 2 + window.scrollY
-		};
-
-		// toggle active state
-		this.isActive = true;
-
-		// Check if the mouse is hovering over a data element
-		if (target.closest('[data-interactive-cursor]')) {
-			const dataElement = target.closest('[data-interactive-cursor]');
-			this.activeDataName = dataElement?.getAttribute('data-interactive-cursor') || '';
-			this.activeDataElement = dataElement as HTMLElement;
-			this.isHoveringDataElementRect = this.useDataElementRect?.includes(this.activeDataName);
+	const animateCursor = (target: HTMLElement) => {
+		if (target.closest('[data-interactive-cursor-data]')) {
+			state.activeDataElement = target.closest('[data-interactive-cursor-data]') as HTMLElement;
+			state.activeDataName =
+				state.activeDataElement.getAttribute('data-interactive-cursor-data') || '';
+			state.isHoveringDataElementRect =
+				state.activeDataName !== '' && useDataElementRect.includes(state.activeDataName);
+			state.dataElementRect = state.activeDataElement.getBoundingClientRect();
 		} else {
-			this.activeDataName = '';
-			this.activeDataElement = null;
-			this.isHoveringDataElementRect = false;
+			state.activeDataElement = null;
+			state.activeDataName = '';
 		}
-
-		// Update cursor animation
-		this.cursor.classList.toggle('active', this.isActive);
-
-		// get active data element rect
-		const dataElementRect = this.activeDataElement?.getBoundingClientRect();
 
 		// Get cursor element and set animation options
-		const animationKeyframes = this.isHoveringDataElementRect
+		const animationKeyframes = state.isHoveringDataElementRect
 			? {
-					transform: `translate3D(${dataElementRect!.left}px, ${dataElementRect!.top}px, 0) scale3D(1,1,1)`,
-					width: `${dataElementRect!.width}px`,
-					height: `${dataElementRect!.height}px`
+					transform: `translate3D(${state.dataElementRect!.left}px, ${state.dataElementRect!.top}px, 0) scale3D(1,1,1)`,
+					width: `${state.dataElementRect!.width}px`,
+					height: `${state.dataElementRect!.height}px`
 				}
 			: {
-					width: `${this.defaultSize}px`,
-					height: `${this.defaultSize}px`,
-					transform: `translate3D(${this.pointerCoords.x}px, ${this.pointerCoords.y}px, 0) scale3D(${this.activeDataName !== '' ? this.activeSizeMultiplicator : 1}, ${this.activeDataName !== '' ? this.activeSizeMultiplicator : 1}, 1)`
+					width: `${defaultSize}px`,
+					height: `${defaultSize}px`,
+					transform: `translate3D(${state.pointerCoords.x}px, ${state.pointerCoords.y}px, 0) scale3D(${state.activeDataName !== '' ? activeSizeMultiplicator : 1}, ${state.activeDataName !== '' ? activeSizeMultiplicator : 1}, 1)`
 				};
 
 		const animationTiming: KeyframeAnimationOptions = {
-			duration: this.isHoveringDataElementRect ? 50 : this.duration,
-			fill: 'forwards' as FillMode,
-			easing: 'linear'
+			duration: state.isHoveringDataElementRect ? 50 : duration,
+			fill: 'forwards' as FillMode
 		};
 
-		// Animate cursor
-		this.cursor.animate(animationKeyframes, animationTiming);
-	}
+		// animate cursor
+		currentAnimation?.cancel();
+		currentAnimation = cursor.animate(animationKeyframes, animationTiming);
+	};
 
-	// This method is called when the mouse leaves the trigger area
-	private stopCursorTracking() {
-		this.pointerCoords = { x: 0, y: 0 };
-		this.isActive = false;
-		this.isHoveringDataElementRect = false;
-	}
+	// start cursor tracking
+	const startCursorTracking = (event: MouseEvent) => {
+		const { clientX, clientY, target } = event;
+		state.pointerCoords = {
+			x: clientX - cursor.offsetWidth / 2,
+			y: clientY - cursor.offsetHeight / 2 + window.scrollY
+		};
+		state.isActive = true;
 
-	// Call this method in the svelte component to remove event listeners
-	destroy() {
-		this.triggerAreas.forEach((triggerAreaElement) => {
-			triggerAreaElement.removeEventListener(
-				'mousemove',
-				this.startCursorTracking as EventListener
-			);
-			triggerAreaElement.removeEventListener(
-				'mouseleave',
-				this.stopCursorTracking as EventListener
-			);
+		// Get the active data element
+		animateCursor(target as HTMLElement);
+	};
+
+	// stop cursor tracking
+	const stopCursorTracking = () => {
+		state.pointerCoords = { x: 0, y: 0 };
+		state.isActive = false;
+		state.activeDataElement = null;
+		state.activeDataName = '';
+		state.isHoveringDataElementRect = false;
+	};
+
+	// setup event listeners
+	const init = () => {
+		triggerAreas.forEach((triggerArea) => {
+			triggerArea.addEventListener('mousemove', startCursorTracking, { passive: true });
+			triggerArea.addEventListener('mouseleave', stopCursorTracking);
 		});
-	}
-}
+	};
+
+	// cleanup event listeners
+	const cleanup = () => {
+		triggerAreas.forEach((triggerArea) => {
+			triggerArea.removeEventListener('mousemove', startCursorTracking);
+			triggerArea.removeEventListener('mouseleave', stopCursorTracking);
+		});
+	};
+
+	return {
+		get isActive() {
+			return state.isActive;
+		},
+		get activeDataElement() {
+			return state.activeDataElement;
+		},
+		get activeDataName() {
+			return state.activeDataName;
+		},
+		init,
+		destroy() {
+			cleanup();
+		}
+	};
+};
+
+export { interactiveCursor, type InteractiveCursorOptions };
