@@ -76,7 +76,6 @@ const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOption
 		};
 
 		// animate cursor
-		currentAnimation?.cancel();
 		currentAnimation = cursor.animate(animationKeyframes, animationTiming);
 	};
 
@@ -100,6 +99,7 @@ const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOption
 		state.activeDataElement = null;
 		state.activeDataName = '';
 		state.isHoveringDataElementRect = false;
+		currentAnimation?.cancel();
 	};
 
 	// setup event listeners

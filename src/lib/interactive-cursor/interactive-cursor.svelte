@@ -18,7 +18,7 @@
 
 	// DOM element reference
 	let cursor: HTMLDivElement;
-	let initialCursor = $state<InitiaCursor>();
+	let initialCursor = $state<InitiaCursor | null>(null);
 	// Dynamic cursor instance
 	let activeDataElement = $derived<HTMLElement | null>(initialCursor?.activeDataElement ?? null);
 	let activeDataName = $derived<string>(initialCursor?.activeDataName ?? '');
