@@ -14,10 +14,15 @@ type CursorState = {
 	dataElementRect: DOMRect | null;
 };
 
-const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOptions) => {
-	// check if cursor is available and if reduced motion is enabled
-	if (!cursor || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+type InitiaCursor = {
+	readonly isActive: boolean;
+	readonly activeDataElement: HTMLElement | null;
+	readonly activeDataName: string;
+	init: () => void;
+	destroy: () => void;
+};
 
+const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOptions) => {
 	// set default cursor options
 	const {
 		defaultSize = 20,
@@ -130,4 +135,4 @@ const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOption
 	};
 };
 
-export { interactiveCursor, type InteractiveCursorOptions };
+export { interactiveCursor, type InteractiveCursorOptions, type InitiaCursor };

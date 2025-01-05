@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { type InteractiveCursorOptions, interactiveCursor } from './interactiveCursor.svelte.js';
+	import type { InteractiveCursorOptions, InitiaCursor } from './interactiveCursor.svelte.js';
 
 	interface Props extends InteractiveCursorOptions {
 		class?: string;
@@ -18,16 +18,22 @@
 
 	// DOM element reference
 	let cursor: HTMLDivElement;
-	let initialCursor: ReturnType<typeof interactiveCursor> | undefined;
+	let initialCursor = $state<InitiaCursor>();
 	// Dynamic cursor instance
-	let activeDataElement = $state<HTMLElement | null>(null);
-	let activeDataName = $state('');
-	let isActive = $derived.by(() => initialCursor?.isActive ?? false);
+	let activeDataElement = $derived<HTMLElement | null>(initialCursor?.activeDataElement ?? null);
+	let activeDataName = $derived<string>(initialCursor?.activeDataName ?? '');
+	let isActive = $derived<boolean>(initialCursor?.isActive ?? false);
 
 	$inspect({ activeDataElement, activeDataName, isActive });
 
 	$effect(() => {
-		if (!document.querySelector('[data-interactive-cursor-area]')) return;
+		// check if cursor is available and if reduced motion is enabled
+		if (
+			!cursor ||
+			window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+			!document.querySelector('[data-interactive-cursor-area]')
+		)
+			return;
 
 		import('./interactiveCursor.svelte.js').then(({ interactiveCursor }) => {
 			const options: InteractiveCursorOptions = {
@@ -39,24 +45,15 @@
 
 			initialCursor = interactiveCursor(cursor, options);
 			initialCursor?.init();
-
-			// Update activeDataElement and activeDataName when cursor state changes
-			$derived.by(() => {
-				if (!initialCursor) return;
-				activeDataElement = initialCursor.activeDataElement;
-				activeDataName = initialCursor.activeDataName;
-			});
 		});
 
-		return () => {
-			initialCursor?.destroy();
-		};
+		return () => initialCursor?.destroy();
 	});
 </script>
 
 <div
 	bind:this={cursor}
-	style="--size:{defaultSize ?? 24}px;"
+	style="--size:{defaultSize ?? 32}px;"
 	class="lw-interactive-cursor {classes}"
 	class:active={isActive}
 	aria-hidden="true"
