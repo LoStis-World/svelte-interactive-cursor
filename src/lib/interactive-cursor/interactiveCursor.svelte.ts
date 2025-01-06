@@ -14,22 +14,21 @@ type CursorState = {
 	dataElementRect: DOMRect | null;
 };
 
+type ActiveDataValue = {
+	activeDataName: string;
+	activeDataElement: HTMLElement | null;
+};
+
 type InitiaCursor = {
 	readonly isActive: boolean;
-	readonly activeDataElement: HTMLElement | null;
-	readonly activeDataName: string;
+	readonly activeDataValue: ActiveDataValue;
 	init: () => void;
 	destroy: () => void;
 };
 
 const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOptions) => {
 	// set default cursor options
-	const {
-		defaultSize = 20,
-		activeSizeMultiplicator = 2,
-		duration = 300,
-		useDataElementRect = []
-	} = options;
+	const { defaultSize, activeSizeMultiplicator, duration, useDataElementRect = [] } = options;
 
 	// set initial state
 	const state = $state<CursorState>({
@@ -45,33 +44,32 @@ const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOption
 	const triggerAreas = document.querySelectorAll<HTMLElement>('[data-interactive-cursor-area]');
 
 	const animateCursor = (target: HTMLElement) => {
-		if (target.closest('[data-interactive-cursor-data]')) {
-			state.activeDataElement = target.closest('[data-interactive-cursor-data]') as HTMLElement;
-			state.activeDataName =
-				state.activeDataElement.getAttribute('data-interactive-cursor-data') || '';
+		if (target.closest('[data-interactive-cursor]')) {
+			state.activeDataElement = target.closest('[data-interactive-cursor]') as HTMLElement;
+			state.activeDataName = state.activeDataElement.getAttribute('data-interactive-cursor') || '';
 			state.isHoveringDataElementRect =
 				state.activeDataName !== '' && useDataElementRect.includes(state.activeDataName);
 			state.dataElementRect = state.activeDataElement.getBoundingClientRect();
 		} else {
 			state.activeDataElement = null;
 			state.activeDataName = '';
+			state.isHoveringDataElementRect = false;
 		}
 
 		// Get cursor element and set animation options
 		const animationKeyframes = state.isHoveringDataElementRect
 			? {
-					transform: `translate3D(${state.dataElementRect!.left}px, ${state.dataElementRect!.top}px, 0) scale3D(1,1,1)`,
 					width: `${state.dataElementRect!.width}px`,
-					height: `${state.dataElementRect!.height}px`
+					height: `${state.dataElementRect!.height}px`,
+					transform: `translate3D(${state.dataElementRect!.left}px, ${state.dataElementRect!.top}px, 0) scale3D(1,1,1)`
 				}
 			: {
 					width: `${defaultSize}px`,
 					height: `${defaultSize}px`,
 					transform: `translate3D(${state.pointerCoords.x}px, ${state.pointerCoords.y}px, 0) scale3D(${state.activeDataName !== '' ? activeSizeMultiplicator : 1}, ${state.activeDataName !== '' ? activeSizeMultiplicator : 1}, 1)`
 				};
-
 		const animationTiming: KeyframeAnimationOptions = {
-			duration: state.isHoveringDataElementRect ? 50 : duration,
+			duration: duration,
 			fill: 'forwards' as FillMode
 		};
 
@@ -122,11 +120,11 @@ const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOption
 		get isActive() {
 			return state.isActive;
 		},
-		get activeDataElement() {
-			return state.activeDataElement;
-		},
-		get activeDataName() {
-			return state.activeDataName;
+		get activeDataValue() {
+			return {
+				activeDataName: state.activeDataName,
+				activeDataElement: state.activeDataElement
+			};
 		},
 		init,
 		destroy() {
@@ -135,4 +133,9 @@ const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOption
 	};
 };
 
-export { interactiveCursor, type InteractiveCursorOptions, type InitiaCursor };
+export {
+	interactiveCursor,
+	type InteractiveCursorOptions,
+	type InitiaCursor,
+	type ActiveDataValue
+};

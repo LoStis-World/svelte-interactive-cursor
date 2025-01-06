@@ -1,33 +1,35 @@
 <script lang="ts">
-	import type { Snippet } from 'svelte';
+	import { type Snippet, onMount } from 'svelte';
 	import type { InteractiveCursorOptions, InitiaCursor } from './interactiveCursor.svelte.js';
 
 	interface Props extends InteractiveCursorOptions {
 		class?: string;
 		children?: Snippet;
+		activeDataValue?: {
+			activeDataName: string;
+			activeDataElement: HTMLElement | null;
+		};
 	}
 
+	// Component props
 	let {
-		activeSizeMultiplicator,
-		defaultSize,
-		duration,
-		useDataElementRect,
+		activeSizeMultiplicator = 3,
+		defaultSize = 32,
+		duration = 500,
+		useDataElementRect = [],
 		class: classes,
+		activeDataValue = $bindable({ activeDataName: '', activeDataElement: null }),
 		children
 	}: Props = $props();
 
 	// DOM element reference
 	let cursor: HTMLDivElement;
 	let initialCursor = $state<InitiaCursor | null>(null);
-	// Dynamic cursor instance
-	let activeDataElement = $derived<HTMLElement | null>(initialCursor?.activeDataElement ?? null);
-	let activeDataName = $derived<string>(initialCursor?.activeDataName ?? '');
-	let isActive = $derived<boolean>(initialCursor?.isActive ?? false);
+	// Dynamic cursor props
+	let isActive = $derived(initialCursor?.isActive ?? false);
 
-	$inspect({ activeDataElement, activeDataName, isActive });
-
-	$effect(() => {
-		// check if cursor is available and if reduced motion is enabled
+	onMount(() => {
+		// check if cursor is available and if reduced motion is enabled or if there is no interactive cursor area
 		if (
 			!cursor ||
 			window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
@@ -35,6 +37,7 @@
 		)
 			return;
 
+		// import the interactive cursor module
 		import('./interactiveCursor.svelte.js').then(({ interactiveCursor }) => {
 			const options: InteractiveCursorOptions = {
 				defaultSize,
@@ -47,13 +50,24 @@
 			initialCursor?.init();
 		});
 
+		// cleanup
 		return () => initialCursor?.destroy();
+	});
+
+	// update active data value
+	$effect(() => {
+		if (initialCursor) {
+			activeDataValue = {
+				activeDataName: initialCursor?.activeDataValue.activeDataName ?? '',
+				activeDataElement: initialCursor?.activeDataValue.activeDataElement ?? null
+			};
+		}
 	});
 </script>
 
 <div
 	bind:this={cursor}
-	style="--size:{defaultSize ?? 32}px;"
+	style="--size:{defaultSize}px;"
 	class="lw-interactive-cursor {classes}"
 	class:active={isActive}
 	aria-hidden="true"
@@ -72,14 +86,16 @@
 		height: var(--size);
 		opacity: 0;
 		visibility: hidden;
+		will-change: auto;
 	}
 	.lw-interactive-cursor.active {
 		opacity: 1;
 		visibility: visible;
 	}
+
 	@media (prefers-reduced-motion: no-preference) {
 		.lw-interactive-cursor {
-			transition: all 500ms cubic-bezier(0.4, 0, 0.2, 1);
+			transition: opacity 500ms cubic-bezier(0.4, 0, 0.2, 1);
 		}
 	}
 </style>

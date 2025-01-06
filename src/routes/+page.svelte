@@ -1,7 +1,7 @@
 <script lang="ts">
 	import InteractiveCursor from '$lib/interactive-cursor/index.js';
 
-	let currentCursorState = $state('');
+	let currentCursorState = $state({ activeDataName: '', activeDataElement: null });
 
 	const customCursorProps = [
 		{
@@ -17,6 +17,10 @@
 			data: 'link',
 			icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" /></svg>`,
 			cursorClass: 'bg-sky-500 text-white'
+		},
+		{
+			data: 'tablist',
+			cursorClass: 'rounded-none outline outline-2 outline-purple-500 outline-offset-8'
 		}
 	];
 </script>
@@ -67,14 +71,15 @@
 </div>
 
 <InteractiveCursor
+	bind:activeDataValue={currentCursorState}
 	useDataElementRect={['tablist']}
-	class="rounded-full {currentCursorState === ''
+	class="rounded-full flex items-center justify-center {currentCursorState.activeDataName === ''
 		? 'bg-white text-black'
-		: customCursorProps.find((state) => state.data === currentCursorState)?.cursorClass ||
-			'bg-white text-black'}"
+		: customCursorProps.find((state) => state.data === currentCursorState.activeDataName)
+				?.cursorClass || 'bg-white text-black'}"
 >
 	{#each customCursorProps as { icon, data }}
-		{#if data === currentCursorState && icon}
+		{#if data === currentCursorState.activeDataName && icon}
 			{@html icon}
 		{/if}
 	{/each}
