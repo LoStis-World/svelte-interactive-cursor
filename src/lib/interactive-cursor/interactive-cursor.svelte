@@ -1,92 +1,67 @@
 <script lang="ts">
-	import type { InteractiveCursorProps } from './index.js';
+	import { type Snippet, onMount } from 'svelte';
+	import type { InteractiveCursorOptions, InitiaCursor } from './interactiveCursor.svelte.js';
 
-	// Props
+	interface Props extends InteractiveCursorOptions {
+		class?: string;
+		children?: Snippet;
+		activeDataValue?: {
+			activeDataName: string;
+			activeDataElement: HTMLElement | null;
+		};
+	}
+
+	// Component props
 	let {
-		class: classes,
-		duration = 500,
-		triggerAreas,
 		activeSizeMultiplicator = 3,
 		defaultSize = 32,
-		activeDataName = $bindable(''),
-		activeDataElement = $bindable(null),
+		duration = 500,
+		useDataElementRect = [],
+		class: classes,
+		activeDataValue = $bindable({ activeDataName: '', activeDataElement: null }),
 		children
-	}: InteractiveCursorProps = $props();
+	}: Props = $props();
 
-	// Reactive state
-	let pointerCords = $state({ x: 0, y: 0 });
-	let isActive = $state(false);
+	// DOM element reference
+	let cursor: HTMLDivElement;
+	let initialCursor = $state<InitiaCursor | null>(null);
+	// Dynamic cursor props
+	let isActive = $derived(initialCursor?.isActive ?? false);
 
-	// DOM elements
-	let cursor: HTMLDivElement | null;
-	let triggerAreaElements: HTMLElement[] | null;
+	onMount(() => {
+		// check if cursor is available and if reduced motion is enabled or if there is no interactive cursor area
+		if (
+			!cursor ||
+			window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+			!document.querySelector('[data-interactive-cursor-area]')
+		)
+			return;
 
-	// Start cursor tracking
-	const startCursorTracking = (e: PointerEvent) => {
-		if (!cursor) return;
+		// import the interactive cursor module
+		import('./interactiveCursor.svelte.js').then(({ interactiveCursor }) => {
+			const options: InteractiveCursorOptions = {
+				defaultSize,
+				activeSizeMultiplicator,
+				duration,
+				useDataElementRect
+			};
 
-		const target = e.target as HTMLElement;
-		pointerCords = {
-			x: e.clientX - cursor.offsetWidth / 2,
-			y: e.clientY - cursor.offsetHeight / 2 + window.scrollY
-		};
-		isActive = true;
-
-		// check if target has interactive cursor data attribute
-		if (target.closest('[data-interactive-cursor]')) {
-			activeDataName =
-				target.closest('[data-interactive-cursor]')?.getAttribute('data-interactive-cursor') || '';
-			activeDataElement = target.closest('[data-interactive-cursor]');
-		} else {
-			activeDataName = '';
-			activeDataElement = null;
-		}
-
-		// Get cursor element and set animation options
-		const animationKeyframes = {
-			transform: `translate3D(${pointerCords.x}px, ${pointerCords.y}px, 0) scale3D(${activeDataName !== '' ? activeSizeMultiplicator : 1}, ${activeDataName !== '' ? activeSizeMultiplicator : 1}, 1)`
-		};
-
-		const animationTiming: KeyframeAnimationOptions = {
-			duration: duration,
-			fill: 'forwards' as FillMode
-		};
-
-		// Animate cursor
-		cursor.animate(animationKeyframes, animationTiming);
-	};
-
-	// Stop cursor tracking
-	const stopCursorTracking = () => {
-		pointerCords = { x: 0, y: 0 };
-		isActive = false;
-	};
-
-	$effect(() => {
-		if (!triggerAreas || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-		// Set triggerAreas elements as array of HTMLElements
-		triggerAreaElements = (
-			triggerAreas.map((area) =>
-				typeof area === 'string' ? document.querySelector(area as string) : (area as HTMLElement)
-			) || []
-		).filter((el): el is HTMLElement => el !== null);
-
-		// Add event listeners
-		triggerAreaElements?.forEach((triggerAreaElement) => {
-			triggerAreaElement?.addEventListener('mousemove', startCursorTracking as EventListener, {
-				passive: true
-			});
-			triggerAreaElement?.addEventListener('mouseleave', stopCursorTracking as EventListener);
+			initialCursor = interactiveCursor(cursor, options);
+			initialCursor?.init();
 		});
 
-		// Remove event listeners on destroy
-		return () => {
-			triggerAreaElements?.forEach((triggerAreaElement) => {
-				triggerAreaElement?.removeEventListener('mousemove', startCursorTracking as EventListener);
-				triggerAreaElement?.removeEventListener('mouseleave', stopCursorTracking as EventListener);
-			});
-		};
+		// cleanup
+		return () => initialCursor?.destroy();
+	});
+
+	// update active data value
+	$effect(() => {
+		if (initialCursor) {
+			activeDataValue = {
+				activeDataName: initialCursor?.activeDataValue.activeDataName ?? '',
+				activeDataElement: initialCursor?.activeDataValue.activeDataElement ?? null
+			};
+		}
 	});
 </script>
 
@@ -107,21 +82,20 @@
 		left: 0;
 		z-index: 100;
 		pointer-events: none;
-		display: flex;
-		justify-content: center;
-		align-items: center;
 		width: var(--size);
 		height: var(--size);
 		opacity: 0;
 		visibility: hidden;
+		will-change: auto;
 	}
 	.lw-interactive-cursor.active {
 		opacity: 1;
 		visibility: visible;
 	}
+
 	@media (prefers-reduced-motion: no-preference) {
 		.lw-interactive-cursor {
-			transition: all 500ms cubic-bezier(0.4, 0, 0.2, 1);
+			transition: opacity 500ms cubic-bezier(0.4, 0, 0.2, 1);
 		}
 	}
 </style>
