@@ -96,14 +96,14 @@ Here is an example with custom cursor behavior and styles:
 
 ### `InteractiveCursor` Props
 
-| Prop                      | Type                                                         | Default                                           | Description                                                                                 |
-| ------------------------- | ------------------------------------------------------------ | ------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| `class`                   | `string`                                                     | `''`                                              | Additional CSS classes for the cursor.                                                      |
-| `defaultSize`             | `number`                                                     | `32`                                              | Default size of the cursor in pixels.                                                       |
-| `activeSizeMultiplicator` | `number`                                                     | `3`                                               | Scale multiplier when the cursor is active.                                                 |
-| `duration`                | `number`                                                     | `500`                                             | Animation duration in milliseconds.                                                         |
-| `useDataElementRect`      | `string[]`                                                   | `[]`                                              | List of `data-interactive-cursor` attribute values that should trigger the cursor resizing. |
-| `activeDataValue`         | `{ activeDataName: string, activeDataElement: HTMLElement }` | `{ activeDataName: '', activeDataElement: null }` | Tracks the currently active cursor data and element.                                        |
+| Prop                      | Type                                                                 | Default                                           | Description                                                                                 |
+| ------------------------- | -------------------------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `class`                   | `string`                                                             | `''`                                              | Additional CSS classes for the cursor.                                                      |
+| `defaultSize`             | `number`                                                             | `32`                                              | Default size of the cursor in pixels.                                                       |
+| `activeSizeMultiplicator` | `number`                                                             | `3`                                               | Scale multiplier when the cursor is active.                                                 |
+| `duration`                | `number`                                                             | `500`                                             | Animation duration in milliseconds.                                                         |
+| `useDataElementRect`      | `string[]`                                                           | `[]`                                              | List of `data-interactive-cursor` attribute values that should trigger the cursor resizing. |
+| `activeDataValue`         | `{ activeDataName: string, activeDataElement: HTMLElement or null }` | `{ activeDataName: '', activeDataElement: null }` | Tracks the currently active cursor data and element.                                        |
 
 ---
 
