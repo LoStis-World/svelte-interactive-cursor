@@ -6,7 +6,7 @@ The `InteractiveCursor` is a Svelte 5 component that provides a customizable, in
 
 [CHANGELOG](./CHANGELOG.md)
 
-![](./static/images/interactive-cursor.gif)
+![](./static/images/interactive-cursor-preview.gif)
 
 ---
 
