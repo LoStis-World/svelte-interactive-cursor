@@ -82,7 +82,7 @@ const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOption
 		const { clientX, clientY, target } = event;
 		state.pointerCoords = {
 			x: clientX - cursor.offsetWidth / 2,
-			y: clientY - cursor.offsetHeight / 2 + window.scrollY
+			y: clientY - cursor.offsetHeight / 2
 		};
 		state.isActive = true;
 
