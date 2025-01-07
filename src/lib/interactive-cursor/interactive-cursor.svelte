@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { type Snippet, onMount } from 'svelte';
-	import type { InteractiveCursorOptions, InitiaCursor } from './interactiveCursor.svelte.js';
+	import type { InteractiveCursorOptions, InitialCursor } from './interactiveCursor.svelte.js';
 
 	interface Props extends InteractiveCursorOptions {
 		class?: string;
@@ -24,7 +24,7 @@
 
 	// DOM element reference
 	let cursor: HTMLDivElement;
-	let initialCursor = $state<InitiaCursor | null>(null);
+	let initialCursor = $state<InitialCursor | null>(null);
 	// Dynamic cursor props
 	let isActive = $derived(initialCursor?.isActive ?? false);
 
@@ -33,7 +33,8 @@
 		if (
 			!cursor ||
 			window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
-			!document.querySelector('[data-interactive-cursor-area]')
+			!document.querySelector('[data-interactive-cursor-area]') ||
+			window.innerWidth < 1024
 		)
 			return;
 

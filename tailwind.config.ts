@@ -4,7 +4,12 @@ export default {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
 
 	theme: {
-		extend: {}
+		extend: {
+			container: {
+				center: true,
+				padding: '1rem'
+			}
+		}
 	},
 
 	plugins: []

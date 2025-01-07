@@ -1,5 +1,6 @@
 <script lang="ts">
 	import InteractiveCursor from '$lib/interactive-cursor/index.js';
+	import Nav from './landing/Nav.svelte';
 
 	let currentCursorState = $state({ activeDataName: '', activeDataElement: null });
 
@@ -25,50 +26,19 @@
 	];
 </script>
 
-<div class="grid grid-rows-[auto_1fr] p-8 min-h-screen">
-	<section class="py-8">
-		<h2 class="font-semibold text-2xl">
-			Hover the green section to start tracking the mouse position, activate the cursor animation by
-			hovering one of the red bordered elements!
-		</h2>
-	</section>
+<header class="lg:min-h-screen py-32 bg-">
+	<Nav />
+	<h1 class="text-white text-center text-4xl font-semibold">
+		<span class="uppercase">Svelte</span>
+		<span>Interactive Cursor</span>
+	</h1>
+</header>
 
-	<section
-		data-interactive-cursor-area
-		class="flex flex-wrap justify-center items-center gap-8 2xl:gap-16 p-16 border border-green-500"
-	>
-		<div class="min-w-full">
-			<ul class="border border-sky-500 px-4 py-2 flex gap-4" data-interactive-cursor="tablist">
-				<li>Link 1</li>
-				<li>Link 2</li>
-				<li>Link 3</li>
-			</ul>
-		</div>
-		<div
-			class="flex-1 h-96 border border-red-500 flex flex-col text-xs text-center p-8"
-			data-interactive-cursor="image"
-		>
-			<h2 class="m-auto font-semibold uppercase">Image</h2>
-			<p><strong>data-interactive-cursor="image"</strong></p>
-		</div>
+<main></main>
 
-		<div
-			class="flex-1 h-96 border border-red-500 flex flex-col text-xs text-center p-8"
-			data-interactive-cursor="video"
-		>
-			<h2 class="m-auto font-semibold uppercase">Video</h2>
-			<p><strong>data-interactive-cursor="video"</strong></p>
-		</div>
-
-		<div
-			class="flex-1 h-96 border border-red-500 flex flex-col text-xs text-center p-8"
-			data-interactive-cursor="link"
-		>
-			<h2 class="m-auto font-semibold uppercase">Link</h2>
-			<p><strong>data-interactive-cursor="link"</strong></p>
-		</div>
-	</section>
-</div>
+<footer class="border-t border-gray-800 py-16">
+	<div class="container">hello</div>
+</footer>
 
 <InteractiveCursor
 	bind:activeDataValue={currentCursorState}

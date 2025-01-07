@@ -19,7 +19,7 @@ type ActiveDataValue = {
 	activeDataElement: HTMLElement | null;
 };
 
-type InitiaCursor = {
+type InitialCursor = {
 	readonly isActive: boolean;
 	readonly activeDataValue: ActiveDataValue;
 	init: () => void;
@@ -136,6 +136,6 @@ const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOption
 export {
 	interactiveCursor,
 	type InteractiveCursorOptions,
-	type InitiaCursor,
+	type InitialCursor,
 	type ActiveDataValue
 };
