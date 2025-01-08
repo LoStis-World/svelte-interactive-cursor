@@ -1,6 +1,6 @@
 <script lang="ts">
 	import InteractiveCursor from '$lib/interactive-cursor/index.js';
-	import Nav from './landing/Nav.svelte';
+	import Header from './landing/Header.svelte';
 
 	let currentCursorState = $state({ activeDataName: '', activeDataElement: null });
 
@@ -20,21 +20,15 @@
 			cursorClass: 'bg-sky-500 text-white'
 		},
 		{
-			data: 'tablist',
-			cursorClass: 'rounded-none outline outline-2 outline-purple-500 outline-offset-8'
+			data: 'copyarea',
+			cursorClass: 'rounded-md outline outline-dashed outline-1 outline-orange-700 outline-offset-8'
 		}
 	];
 </script>
 
-<header class="lg:min-h-screen py-32 bg-">
-	<Nav />
-	<h1 class="text-white text-center text-4xl font-semibold">
-		<span class="uppercase">Svelte</span>
-		<span>Interactive Cursor</span>
-	</h1>
-</header>
+<Header />
 
-<main></main>
+<main data-interactive-cursor-area></main>
 
 <footer class="border-t border-gray-800 py-16">
 	<div class="container">hello</div>
@@ -42,7 +36,8 @@
 
 <InteractiveCursor
 	bind:activeDataValue={currentCursorState}
-	useDataElementRect={['tablist']}
+	useDataElementRect={['copyarea']}
+	defaultSize={24}
 	class="rounded-full flex items-center justify-center {currentCursorState.activeDataName === ''
 		? 'bg-white text-black'
 		: customCursorProps.find((state) => state.data === currentCursorState.activeDataName)
