@@ -1,9 +1,14 @@
 interface InteractiveCursorOptions {
 	defaultSize?: number;
-	activeSizeMultiplicator?: number;
+	scaleOnActive?: ScaleOnActiveElement[];
 	duration?: number;
 	useDataElementRect?: string[];
 }
+
+type ScaleOnActiveElement = {
+	element: string;
+	scaleMultiplicator?: number;
+};
 
 type CursorState = {
 	pointerCoords: { x: number; y: number };
@@ -28,7 +33,7 @@ type InitialCursor = {
 
 const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOptions) => {
 	// set default cursor options
-	const { defaultSize, activeSizeMultiplicator, duration, useDataElementRect = [] } = options;
+	const { defaultSize, scaleOnActive = [], duration, useDataElementRect = [] } = options;
 
 	// set initial state
 	const state = $state<CursorState>({
@@ -57,24 +62,42 @@ const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOption
 		}
 
 		// Get cursor element and set animation options
-		const animationKeyframes = state.isHoveringDataElementRect
-			? {
+		const animationKeyframes = () => {
+			if (state.isHoveringDataElementRect) {
+				return {
 					width: `${state.dataElementRect!.width}px`,
 					height: `${state.dataElementRect!.height}px`,
 					transform: `translate3D(${state.dataElementRect!.left}px, ${state.dataElementRect!.top}px, 0) scale3D(1,1,1)`
-				}
-			: {
+				};
+			}
+
+			if (scaleOnActive.find((key) => key.element === state.activeDataName)) {
+				// get the active size multiplicator
+				const getActiveSizeMultiplicator = scaleOnActive.find(
+					(key) => key.element === state.activeDataName
+				)?.scaleMultiplicator;
+
+				return {
 					width: `${defaultSize}px`,
 					height: `${defaultSize}px`,
-					transform: `translate3D(${state.pointerCoords.x}px, ${state.pointerCoords.y}px, 0) scale3D(${state.activeDataName !== '' ? activeSizeMultiplicator : 1}, ${state.activeDataName !== '' ? activeSizeMultiplicator : 1}, 1)`
+					transform: `translate3D(${state.pointerCoords.x}px, ${state.pointerCoords.y}px, 0) scale3D(${getActiveSizeMultiplicator ?? 3}, ${getActiveSizeMultiplicator ?? 3}, 1)`
 				};
+			}
+
+			return {
+				width: `${defaultSize}px`,
+				height: `${defaultSize}px`,
+				transform: `translate3D(${state.pointerCoords.x}px, ${state.pointerCoords.y}px, 0) scale3D(1,1,1)`
+			};
+		};
+
 		const animationTiming: KeyframeAnimationOptions = {
 			duration: duration,
 			fill: 'forwards' as FillMode
 		};
 
 		// animate cursor
-		currentAnimation = cursor.animate(animationKeyframes, animationTiming);
+		currentAnimation = cursor.animate(animationKeyframes(), animationTiming);
 	};
 
 	// start cursor tracking
@@ -137,5 +160,6 @@ export {
 	interactiveCursor,
 	type InteractiveCursorOptions,
 	type InitialCursor,
-	type ActiveDataValue
+	type ActiveDataValue,
+	type ScaleOnActiveElement
 };

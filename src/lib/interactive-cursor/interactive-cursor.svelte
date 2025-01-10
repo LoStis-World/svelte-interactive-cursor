@@ -13,7 +13,7 @@
 
 	// Component props
 	let {
-		activeSizeMultiplicator = 3,
+		scaleOnActive = [],
 		defaultSize = 32,
 		duration = 500,
 		useDataElementRect = [],
@@ -42,7 +42,7 @@
 		import('./interactiveCursor.svelte.js').then(({ interactiveCursor }) => {
 			const options: InteractiveCursorOptions = {
 				defaultSize,
-				activeSizeMultiplicator,
+				scaleOnActive,
 				duration,
 				useDataElementRect
 			};
