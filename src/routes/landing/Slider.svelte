@@ -1,16 +1,16 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onDestroy } from 'svelte';
 
 	let { images } = $props();
 	const sliderList = [images[images.length - 1], ...images, images[0]];
 
 	// Global variables
 	let changeDirection = $state(false);
-	let timeout: ReturnType<typeof setTimeout> = undefined;
+	let timeout: ReturnType<typeof setTimeout>;
 	let currentSlideIndex = $state(1);
 	let stopAnimation = $state(false);
 
-	function changeSlide(slideDirection) {
+	function changeSlide(slideDirection: number) {
 		if (changeDirection) return;
 		changeDirection = true;
 		slideDirection === 1 ? currentSlideIndex++ : currentSlideIndex--;
@@ -31,7 +31,7 @@
 		});
 	}
 
-	onMount(() => timeout && clearTimeout(timeout));
+	onDestroy(() => timeout && clearTimeout(timeout));
 </script>
 
 <div class="container px-0 relative flex overflow-clip aspect-video">
@@ -55,7 +55,7 @@
 				alt={title}
 				class={[
 					'size-full object-cover translate-x-[calc(-1_*_var(--slide))] transform-gpu shrink-0 motion-safe:transition-transform motion-safe:duration-300',
-					stopAnimation && 'motion-safe:transition-none'
+					stopAnimation && 'motion-safe:transition-none motion-safe:duration-0'
 				]}
 			/>
 		{/each}
