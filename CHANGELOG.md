@@ -1,6 +1,37 @@
 # Changelog
 
-## Version 0.2.0 (Current Release)
+## Version 0.3.0 (Latest Release)
+
+#### Added
+
+- **State Management Enhancements**:
+  - Introduced `activeDataValue` to expose the currently active interactive element's name and DOM reference.
+- **Custom Rendering Support**:
+  - Added `children` property to allow custom rendering inside the cursor element.
+- **Enhanced Responsiveness**:
+  - Automatically disables the interactive cursor for small screens (width < 1024px) or when `prefers-reduced-motion` is enabled.
+- **Dynamic Scaling**:
+  - Cursor dynamically adjusts size and position when interacting with elements specified in `useDataElementRect`.
+- **Custom Animation Control**:
+  - Support for `KeyframeAnimationOptions` to define animation properties like duration and fill mode.
+
+#### Changed
+
+- **Reactivity Refactor**:
+  - Improved reactive state handling using `$state` and `$effect` for smoother updates.
+- **Cursor Initialization**:
+  - Moved initialization logic to `onMount` to ensure the component properly handles dynamic DOM updates.
+
+#### Fixed
+
+- **Event Listeners**:
+  - Ensured proper cleanup of event listeners to avoid memory leaks.
+- **Bounding Rect Handling**:
+  - Fixed issues with incorrect calculations for element bounding rectangles when using `useDataElementRect`.
+
+---
+
+## Version 0.2.0 (Latest Release)
 
 ### New Features
 
@@ -48,23 +79,3 @@
 - No support for resizing or repositioning the cursor based on target element dimensions.
 - Lacked advanced customization for icons or styles associated with specific `data-interactive-cursor` values.
 - Minimal state feedback for interaction.
-
----
-
-## Summary of Changes Between 0.1.1 and 0.2.0
-
-1. **Enhanced Customization**: Added icon rendering and dynamic styling based on cursor state.
-2. **Data Element Rect Tracking**: Introduced `useDataElementRect` for dynamic cursor resizing and alignment with target elements.
-3. **Expanded State Tracking**: Enhanced `activeDataValue` to provide more detailed information about active interactions.
-4. **Improved Usability**: Simplified integration and configuration through additional props and improved internal logic.
-5. **Animation and Performance**: Refined animation logic for smoother transitions and better performance.
-
----
-
-### Upgrade Path
-
-To upgrade from version 0.1.1 to 0.2.0:
-
-1. Replace the `InteractiveCursor` component code with the updated version.
-2. Add `useDataElementRect` and customize icons or styles for specific cursor interactions as needed.
-3. Update bindings to the new `activeDataValue` format for detailed interaction tracking.
