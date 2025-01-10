@@ -2,7 +2,7 @@
 
 The `InteractiveCursor` is a Svelte 5 component that provides a customizable, interactive cursor effect. It dynamically changes its position and size based on user interactions within specified trigger areas. This component is ideal for enhancing user experiences with visually engaging cursor animations.
 
-### [Live Demo](https://svelte.dev/playground/b48cf7b118204c8ea21e8b0c15e324cd?version=5.16.2)
+### [Live Demo](https://lostis-world.github.io/svelte-interactive-cursor/)
 
 [CHANGELOG](./CHANGELOG.md)
 
