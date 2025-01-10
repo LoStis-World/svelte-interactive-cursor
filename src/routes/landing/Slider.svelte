@@ -53,10 +53,8 @@
 			<img
 				src={image}
 				alt={title}
-				class={[
-					'size-full object-cover translate-x-[calc(-1_*_var(--slide))] transform-gpu shrink-0 motion-safe:transition-transform motion-safe:duration-300',
-					stopAnimation && 'motion-safe:transition-none motion-safe:duration-0'
-				]}
+				class="size-full object-cover translate-x-[calc(-1_*_var(--slide))] transform-gpu shrink-0 motion-safe:transition-transform motion-safe:duration-300"
+				class:stopAnimation
 			/>
 		{/each}
 	</div>
@@ -80,3 +78,9 @@
 		{/each}
 	</ul>
 </div>
+
+<style>
+	.stopAnimation {
+		transition: none !important;
+	}
+</style>
