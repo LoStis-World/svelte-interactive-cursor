@@ -24,7 +24,7 @@
 					class="px-6 py-4 inline-flex items-center gap-2 text-gray-400 hover:text-gray-100"
 					rel="noreferrer noopener"
 					title={name}
-					data-interactive-cursor="link"
+					data-interactive-cursor="navlink"
 				>
 					{@html icon}
 					<span>{name}</span>
