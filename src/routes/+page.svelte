@@ -1,10 +1,13 @@
 <script lang="ts">
-	import InteractiveCursor from '$lib/interactive-cursor/index.js';
-	import type { ScaleOnActiveElement } from '$lib/interactive-cursor/interactiveCursor.svelte.js';
+	import InteractiveCursor, {
+		type ScaleOnActiveElement,
+		type ActiveDataValue
+	} from '$lib/interactive-cursor/index.js';
 	import Header from './landing/Header.svelte';
+	import Nav from './landing/Nav.svelte';
 	import Sections from './landing/Sections.svelte';
 
-	let currentCursorState = $state({ activeDataName: '', activeDataElement: null });
+	let currentCursorState: ActiveDataValue = $state({ activeDataName: '', activeDataElement: null });
 
 	// Custom cursor props
 	const scaleOnActive: ScaleOnActiveElement[] = [
@@ -36,10 +39,6 @@
 			cursorClass: 'rounded-md outline outline-dashed outline-1 outline-orange-700 outline-offset-8'
 		},
 		{
-			data: 'navlink',
-			cursorClass: 'rounded-none outline outline-1 outline-indigo-600 -outline-offset-8'
-		},
-		{
 			data: 'cardarea',
 			cursorClass: 'size-6 outline outline-2 outline-gray-300'
 		},
@@ -56,9 +55,19 @@
 			data: 'nextslide',
 			cursorClass: 'bg-white/25 backdrop-blur-sm text-gray-950 text-[6px]',
 			content: `<span>next</span>`
+		},
+		{
+			data: 'hidden',
+			cursorClass: 'bg-transparent'
+		},
+		{
+			data: 'navitem',
+			cursorClass: 'rounded-none outline outline-1 outline-indigo-600'
 		}
 	];
 </script>
+
+<Nav />
 
 <Header />
 
@@ -69,12 +78,18 @@
 <footer class="border-t border-gray-800 py-16">
 	<div class="container">
 		<p class="text-center text-gray-500">Svelte Interactive Cursor</p>
+		<p class="text-center text-gray-500 mt-4">
+			This package enhances user experience by providing a customizable and interactive cursor. It
+			is perfect for adding unique cursor effects to your Svelte applications, making them more
+			engaging and visually appealing. Built with Svelte and TypeScript, it leverages modern web
+			technologies to ensure smooth performance and easy integration.
+		</p>
 	</div>
 </footer>
 
 <InteractiveCursor
 	bind:activeDataValue={currentCursorState}
-	useDataElementRect={['copyarea', 'navlink']}
+	useDataElementRect={['copyarea', 'navitem']}
 	{scaleOnActive}
 	defaultSize={24}
 	class="rounded-full flex items-center justify-center [&>svg]:h-3 {currentCursorState.activeDataName ===

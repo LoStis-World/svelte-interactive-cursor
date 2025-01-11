@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import Nav from './Nav.svelte';
+	import { copyToClipboard } from '../../helpers.js';
 
 	let timeout: ReturnType<typeof setTimeout>;
 	let isCopied = $state(false);
@@ -20,24 +20,16 @@
 		clearTimeout(timeout);
 
 		toCopiedText = text;
-		copyToClipboard(toCopiedText);
-	};
-
-	const copyToClipboard = async (txt: string): Promise<void> => {
-		if (!navigator.clipboard) {
-			return Promise.reject(new Error('Clipboard API not available'));
-		}
-
-		try {
-			await navigator.clipboard.writeText(txt);
+		const finalText = toCopiedText.includes('>npm<')
+			? 'npm i @lostisworld/svelte-interactive-cursor'
+			: 'pnpm add @lostisworld/svelte-interactive-cursor';
+		copyToClipboard(finalText, () => {
 			isCopied = true;
 			timeout = setTimeout(() => {
 				isCopied = false;
-				toCopiedText = null;
+				toCopiedText = '';
 			}, 1000);
-		} catch (err) {
-			console.error('Failed to copy text: ', err);
-		}
+		});
 	};
 
 	onMount(() => {
@@ -55,11 +47,9 @@
 	]}
 	data-interactive-cursor-area
 >
-	<Nav />
-
 	<h1 class="text-3xl font-extrabold sm:text-5xl lg:text-8xl text-center">
 		Svelte
-		<strong class="font-extrabold text-orange-700 sm:block">Interactive Cursor</strong>
+		<strong class="font-extrabold text-indigo-600 sm:block">Interactive Cursor</strong>
 	</h1>
 
 	<p class="mt-8 sm:text-xl text-pretty max-w-xl mx-auto text-center text-gray-400">

@@ -13,23 +13,23 @@
 	];
 </script>
 
-<nav class="fixed top-0 left-0 w-full bg-gray-950/75 backdrop-blur-sm px-4 z-50">
-	<ul
-		class="flex justify-center items-center before:block before:h-px before:flex-1 before:bg-gray-600"
-	>
-		{#each navitems as { name, href, icon }}
-			<li>
-				<a
-					{href}
-					class="px-6 py-4 inline-flex items-center gap-2 text-gray-400 hover:text-gray-100"
-					rel="noreferrer noopener"
-					title={name}
-					data-interactive-cursor="navlink"
-				>
-					{@html icon}
-					<span>{name}</span>
-				</a>
-			</li>
-		{/each}
-	</ul>
-</nav>
+<div class="fixed top-6 left-0 w-full z-50 flex justify-center">
+	<nav class="h-full bg-gray-950/90 backdrop-blur-sm px-4 rounded-full border border-gray-800">
+		<ul class="flex justify-center items-center">
+			{#each navitems as { name, href, icon }}
+				<li>
+					<a
+						{href}
+						class="px-6 py-4 inline-flex text-base items-center gap-2 text-gray-400 hover:text-gray-100"
+						rel="noreferrer noopener"
+						title={name}
+						data-interactive-cursor="navlink"
+					>
+						{@html icon}
+						<span>{name}</span>
+					</a>
+				</li>
+			{/each}
+		</ul>
+	</nav>
+</div>
