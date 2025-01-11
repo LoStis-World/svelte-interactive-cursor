@@ -2,9 +2,9 @@
 	import ShowCode from './ShowCode.svelte';
 	import Slider from './Slider.svelte';
 
-	// import img1 from '/images/slider/image-1.webp';
-	// import img2 from '/images/slider/image-2.webp';
-	// import img3 from '/images/slider/image-3.webp';
+	import img1 from '/images/slider/image-1.webp';
+	import img2 from '/images/slider/image-2.webp';
+	import img3 from '/images/slider/image-3.webp';
 
 	const sectionDefaultOptions = 'py-32 lg:min-h-screen';
 
@@ -12,17 +12,17 @@
 		{
 			title: 'Slide 1',
 			description: 'Slide 1 description',
-			image: '/images/slider/image-1.webp'
+			image: img1
 		},
 		{
 			title: 'Slide 2',
 			description: 'Slide 2 description',
-			image: '/images/slider/image-2.webp'
+			image: img2
 		},
 		{
 			title: 'Slide 3',
 			description: 'Slide 3 description',
-			image: '/images/slider/image-3.webp'
+			image: img3
 		}
 	];
 </script>
