@@ -92,7 +92,9 @@ Here is an example with custom cursor behavior and styles:
 
 ```svelte
 <script lang="ts">
-	import InteractiveCursor from '@lostisworld/svelte-interactive-cursor';
+	import InteractiveCursor, {
+		type ScaleOnActiveElement
+	} from '@lostisworld/svelte-interactive-cursor';
 
 	let currentCursorState = $state({ activeDataName: '', activeDataElement: null });
 
@@ -177,6 +179,33 @@ Example:
 </div>
 ```
 
+### Scaling on Specific Elements
+
+To make the cursor scale when hovering over specific elements, define those elements using the `data-interactive-cursor` attribute.
+
+```svelte
+<main data-interactive-cursor-area>
+	<button data-interactive-cursor="button">Hover Me</button>
+	<InteractiveCursor
+		defaultSize={50}
+		scaleOnActive={[{ element: 'button', scaleMultiplicator: 2 }]}
+	/>
+</main>
+```
+
+---
+
+### Adapting to Element Size
+
+Enable the cursor to adapt its size and position to match specific elements.
+
+```svelte
+<main data-interactive-cursor-area>
+	<div class="card" data-interactive-cursor="card">Hover me!</div>
+	<InteractiveCursor useDataElementRect={['card']} />
+</main>
+```
+
 ---
 
 ## Styling
@@ -203,27 +232,25 @@ The `InteractiveCursor` component includes default styles that can be customized
 
 ---
 
-## API for `interactiveCursor` (Module)
+### Helper Function: `interactiveCursor`
 
-If you need more control over the cursor logic, use the `interactiveCursor` module directly.
+For advanced customization, you can use the `interactiveCursor` function to programmatically control the cursor.
 
-### Function Signature
+#### Parameters
 
-```ts
-interactiveCursor(
-	cursor: HTMLElement,
-	options: InteractiveCursorOptions
-): InitiaCursor
-```
+| Parameter | Type                       | Description                                             |
+| --------- | -------------------------- | ------------------------------------------------------- |
+| `cursor`  | `HTMLElement`              | Reference to the cursor DOM element.                    |
+| `options` | `InteractiveCursorOptions` | Configuration options for the cursor (see table below). |
 
-### `InteractiveCursorOptions`
+#### Configuration Options
 
-| Option                    | Type       | Default | Description                                                                                    |
-| ------------------------- | ---------- | ------- | ---------------------------------------------------------------------------------------------- |
-| `defaultSize`             | `number`   | `32`    | Default cursor size in pixels.                                                                 |
-| `activeSizeMultiplicator` | `number`   | `3`     | Scale multiplier for active state.                                                             |
-| `duration`                | `number`   | `500`   | Animation duration in milliseconds.                                                            |
-| `useDataElementRect`      | `string[]` | `[]`    | Specifies elements (by `data-interactive-cursor`) that should adjust cursor size and position. |
+| Option               | Type                     | Default | Description                                            |
+| -------------------- | ------------------------ | ------- | ------------------------------------------------------ |
+| `defaultSize`        | `number`                 | `32`    | Default cursor size in pixels.                         |
+| `scaleOnActive`      | `ScaleOnActiveElement[]` | `[]`    | Elements that trigger scaling when hovered over.       |
+| `duration`           | `number`                 | `500`   | Animation duration in milliseconds.                    |
+| `useDataElementRect` | `string[]`               | `[]`    | Elements for which bounding rect sizes should be used. |
 
 ---
 
@@ -243,7 +270,8 @@ interactiveCursor(
 
 ## Notes
 
-- The component is disabled for devices with a screen width less than `1024px` or if `prefers-reduced-motion` is enabled.
+- **Reduced Motion**: Automatically disables animations for users with reduced motion preferences.
+- **Responsive Design**: Disables the interactive cursor on smaller screens (e.g., mobile devices).
 - Always ensure the `data-interactive-cursor-area` attribute is present on interactive parent elements.
 
 This documentation provides clear guidance on integrating and customizing the `InteractiveCursor` component for a variety of use cases. Let me know if you'd like further refinements!
