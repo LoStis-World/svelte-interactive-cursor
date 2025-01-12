@@ -34,7 +34,7 @@
 	]}
 	data-interactive-cursor="cardarea"
 >
-	<header class="mb-16">
+	<header class="mb-16 max-w-full">
 		<ShowCode
 			code={`<script>
 					import InteractiveCursor from '@lostisworld/svelte-interactive-cursor';
@@ -142,7 +142,7 @@
 		sectionDefaultOptions
 	]}
 >
-	<header>
+	<header class="max-w-full">
 		<ShowCode
 			code={`
 				<script>
@@ -209,7 +209,12 @@
 	</ul>
 </section>
 
-<section class={[ 'flex justify-center flex-col items-center 2xl:items-start px-6 lg:px-16', sectionDefaultOptions]}>
+<section
+	class={[
+		'flex justify-center flex-col items-center 2xl:items-start px-6 lg:px-16 max-w-full',
+		sectionDefaultOptions
+	]}
+>
 	<ShowCode
 		code={`
 			<script>
@@ -236,7 +241,8 @@
 			/>
 		`}
 	/>
-	<h2 class="text-2xl text-center 2xl:text-left text-white font-extrabold lg:text-6xl lg:leading-tight text-pretty"
+	<h2
+		class="text-2xl text-center 2xl:text-left text-white font-extrabold lg:text-6xl lg:leading-tight text-pretty"
 		data-interactive-cursor="mixblend"
 	>
 		This package enhances user experience by providing a customizable and interactive cursor.<br
@@ -246,7 +252,7 @@
 	</h2>
 </section>
 
-<section class="bg-gray-900 py-32 px-6 2xl:items-start lg:px-16">
+<section class="bg-gray-900 py-32 px-6 2xl:items-start lg:px-16 max-w-full">
 	<ShowCode
 		code={`
 			<script>
@@ -311,7 +317,9 @@
 			</InteractiveCursor>
 		`}
 	/>
-	<h2 class="text-2xl md:text-4xl text-center 2xl:text-left text-white font-bold leading-relaxed mb-16">
+	<h2
+		class="text-2xl md:text-4xl text-center 2xl:text-left text-white font-bold leading-relaxed mb-16"
+	>
 		Creating a new way to interact with your elements!<br /> With Svelte Interactive Cursor
 	</h2>
 	<Slider images={cards} />

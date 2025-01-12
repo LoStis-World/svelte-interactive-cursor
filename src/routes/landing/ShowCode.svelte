@@ -10,7 +10,7 @@
 	let showCode = $state(false);
 </script>
 
-<div class="flex flex-col items-center 2xl:items-start">
+<div class="flex flex-col items-center 2xl:items-start max-w-full">
 	<button
 		type="button"
 		class={[
@@ -48,7 +48,7 @@
 	</button>
 
 	{#if showCode}
-		<div transition:slide class="mb-16">
+		<div transition:slide class="mb-16 max-w-full overflow-clip">
 			<Codeblock {code} />
 		</div>
 	{/if}

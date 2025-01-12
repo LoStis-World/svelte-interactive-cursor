@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { HighlightSvelte } from 'svelte-highlight';
 	import 'svelte-highlight/styles/github-dark.css';
-	import { formatCode, copyToClipboard } from '../../helpers.js';
+	import { formatCode } from '../../helpers.js';
 	import CopyToClipboard from './CopyToClipboard.svelte';
 
 	interface Props {
@@ -14,7 +14,7 @@
 </script>
 
 <div
-	class="rounded-md border border-gray-800 overflow-clip bg-neutral-950 max-w-full lg:max-w-4xl {classes}"
+	class="rounded-md border border-gray-800 overflow-clip bg-neutral-950 w-full lg:max-w-4xl {classes}"
 	data-interactive-cursor="hidden"
 >
 	<div class="flex justify-between items-center px-3 py-2">
@@ -28,5 +28,5 @@
 		/>
 	</div>
 
-	<HighlightSvelte code={formatCode(code)} class="font-mono text-sm" />
+	<HighlightSvelte code={formatCode(code)} class="flex font-mono text-sm max-w-full" />
 </div>
