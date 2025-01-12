@@ -28,10 +28,13 @@
 </script>
 
 <section
-	class={['flex flex-col justify-center items-center', sectionDefaultOptions]}
+	class={[
+		'flex flex-col justify-center items-center 2xl:items-start px-6 lg:px-16',
+		sectionDefaultOptions
+	]}
 	data-interactive-cursor="cardarea"
 >
-	<header class="container mb-16">
+	<header class="mb-16">
 		<ShowCode
 			code={`
 				<script>
@@ -115,10 +118,10 @@
 				</InteractiveCursor>
 			`}
 		/>
-		<h2 class="text-4xl text-center text-white font-bold leading-relaxed">
+		<h2 class="text-4xl text-center 2xl:text-left text-white font-bold leading-relaxed">
 			Creating a new way to interact with your elements!<br /> With Svelte Interactive Cursor
 		</h2>
-		<p class="text-center mt-4">
+		<p class="text-center 2xl:text-left mt-4">
 			Enhance your experience with interactive cursor styles based on the hovered element.
 		</p>
 	</header>
@@ -134,8 +137,13 @@
 	</div>
 </section>
 
-<section class={['flex justify-center flex-col items-center bg-gray-200', sectionDefaultOptions]}>
-	<header class="container">
+<section
+	class={[
+		'flex justify-center flex-col items-center 2xl:items-start bg-gray-200 px-6 lg:px-16',
+		sectionDefaultOptions
+	]}
+>
+	<header>
 		<ShowCode
 			code={`
 				<script>
@@ -164,13 +172,15 @@
 				/>
 			`}
 		/>
-		<h2 class="text-center text-indigo-600 text-4xl font-bold leading-relaxed text-balance mb-16">
+		<h2
+			class="text-center 2xl:text-left text-indigo-600 text-4xl font-bold leading-relaxed text-balance mb-16"
+		>
 			Hover over the navigation and add items to the <strong>useDataElementRect</strong> to dynamically
 			obtain the element's dimensions.
 		</h2>
 	</header>
 	<ul
-		class="container flex justify-center shadow-lg shadow-gray-400 rounded-md text-gray-700 p-6 border-t border-white"
+		class="flex justify-center shadow-lg shadow-gray-400 rounded-md text-gray-700 p-6 border-t border-white"
 	>
 		<li>
 			<button class="px-6 py-2 hover:text-indigo-600 uppercase" data-interactive-cursor="navitem"
@@ -200,7 +210,12 @@
 	</ul>
 </section>
 
-<section class={['flex justify-center flex-col items-center container', sectionDefaultOptions]}>
+<section
+	class={[
+		'flex justify-center flex-col items-center 2xl:items-start px-6 lg:px-16',
+		sectionDefaultOptions
+	]}
+>
 	<ShowCode
 		code={`
 			<script>
@@ -229,7 +244,7 @@
 	/>
 	<h2
 		data-interactive-cursor="mixblend"
-		class="text-3xl text-center text-white font-extrabold lg:text-6xl lg:leading-tight text-pretty"
+		class="text-3xl text-center 2xl:text-left text-white font-extrabold lg:text-6xl lg:leading-tight text-pretty"
 	>
 		This package enhances user experience by providing a customizable and interactive cursor.<br
 		/>It is perfect for adding unique cursor effects to your Svelte applications, making them more
@@ -238,7 +253,7 @@
 	</h2>
 </section>
 
-<section class="bg-gray-900 py-32">
+<section class="bg-gray-900 py-32 px-6 2xl:items-start lg:px-16">
 	<ShowCode
 		code={`
 			<script>
@@ -303,7 +318,7 @@
 			</InteractiveCursor>
 		`}
 	/>
-	<h2 class="text-4xl text-center text-white font-bold leading-relaxed mb-16">
+	<h2 class="text-4xl text-center 2xl:text-left text-white font-bold leading-relaxed mb-16">
 		Creating a new way to interact with your elements!<br /> With Svelte Interactive Cursor
 	</h2>
 	<Slider images={cards} />
