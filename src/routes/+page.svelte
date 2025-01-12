@@ -6,6 +6,7 @@
 	import Header from './landing/Header.svelte';
 	import Nav from './landing/Nav.svelte';
 	import Sections from './landing/Sections.svelte';
+	import Footer from './landing/Footer.svelte';
 
 	let currentCursorState: ActiveDataValue = $state({ activeDataName: '', activeDataElement: null });
 
@@ -71,21 +72,11 @@
 
 <Header />
 
-<main data-interactive-cursor-area>
+<main class="2xl:ml-[40%]" data-interactive-cursor-area>
 	<Sections />
 </main>
 
-<footer class="border-t border-gray-800 py-16">
-	<div class="container">
-		<p class="text-center text-gray-500">Svelte Interactive Cursor</p>
-		<p class="text-center text-gray-500 mt-4">
-			This package enhances user experience by providing a customizable and interactive cursor. It
-			is perfect for adding unique cursor effects to your Svelte applications, making them more
-			engaging and visually appealing. Built with Svelte and TypeScript, it leverages modern web
-			technologies to ensure smooth performance and easy integration.
-		</p>
-	</div>
-</footer>
+<Footer />
 
 <InteractiveCursor
 	bind:activeDataValue={currentCursorState}

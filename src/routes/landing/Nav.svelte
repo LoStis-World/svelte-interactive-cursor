@@ -13,7 +13,7 @@
 	];
 </script>
 
-<div class="fixed top-6 left-0 w-full z-50 flex justify-center">
+<div class="fixed top-6 left-0 w-full z-50 flex justify-center 2xl:w-2/5 2xl:justify-end 2xl:pr-16">
 	<nav class="h-full bg-gray-950/90 backdrop-blur-sm px-4 rounded-full border border-gray-800">
 		<ul class="flex justify-center items-center">
 			{#each navitems as { name, href, icon }}

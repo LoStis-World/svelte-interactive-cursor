@@ -11,7 +11,7 @@
 	$inspect(showCode);
 </script>
 
-<div class="flex flex-col items-center">
+<div class="flex flex-col items-center 2xl:items-start">
 	<button
 		type="button"
 		class={[
