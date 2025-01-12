@@ -36,8 +36,7 @@
 >
 	<header class="mb-16">
 		<ShowCode
-			code={`
-				<script>
+			code={`<script>
 					import InteractiveCursor from '@lostisworld/svelte-interactive-cursor';
 
 					let activeDataValue = $state({ activeDataName: '', activeDataElement: null });
@@ -173,14 +172,14 @@
 			`}
 		/>
 		<h2
-			class="text-center 2xl:text-left text-indigo-600 text-4xl font-bold leading-relaxed text-balance mb-16"
+			class="text-center 2xl:text-left text-indigo-600 text-2xl md:text-4xl font-bold leading-relaxed text-balance mb-16"
 		>
 			Hover over the navigation and add items to the <strong>useDataElementRect</strong> to dynamically
 			obtain the element's dimensions.
 		</h2>
 	</header>
 	<ul
-		class="flex justify-center shadow-lg shadow-gray-400 rounded-md text-gray-700 p-6 border-t border-white"
+		class="flex flex-wrap justify-center shadow-lg shadow-gray-400 rounded-md text-gray-700 p-6 border-t border-white"
 	>
 		<li>
 			<button class="px-6 py-2 hover:text-indigo-600 uppercase" data-interactive-cursor="navitem"
@@ -210,12 +209,7 @@
 	</ul>
 </section>
 
-<section
-	class={[
-		'flex justify-center flex-col items-center 2xl:items-start px-6 lg:px-16',
-		sectionDefaultOptions
-	]}
->
+<section class={[ 'flex justify-center flex-col items-center 2xl:items-start px-6 lg:px-16', sectionDefaultOptions]}>
 	<ShowCode
 		code={`
 			<script>
@@ -242,9 +236,8 @@
 			/>
 		`}
 	/>
-	<h2
+	<h2 class="text-2xl text-center 2xl:text-left text-white font-extrabold lg:text-6xl lg:leading-tight text-pretty"
 		data-interactive-cursor="mixblend"
-		class="text-3xl text-center 2xl:text-left text-white font-extrabold lg:text-6xl lg:leading-tight text-pretty"
 	>
 		This package enhances user experience by providing a customizable and interactive cursor.<br
 		/>It is perfect for adding unique cursor effects to your Svelte applications, making them more
@@ -318,7 +311,7 @@
 			</InteractiveCursor>
 		`}
 	/>
-	<h2 class="text-4xl text-center 2xl:text-left text-white font-bold leading-relaxed mb-16">
+	<h2 class="text-2xl md:text-4xl text-center 2xl:text-left text-white font-bold leading-relaxed mb-16">
 		Creating a new way to interact with your elements!<br /> With Svelte Interactive Cursor
 	</h2>
 	<Slider images={cards} />

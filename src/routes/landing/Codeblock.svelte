@@ -14,7 +14,7 @@
 </script>
 
 <div
-	class="rounded-md border border-gray-800 overflow-clip bg-neutral-950 max-w-4xl {classes}"
+	class="rounded-md border border-gray-800 overflow-clip bg-neutral-950 max-w-full lg:max-w-4xl {classes}"
 	data-interactive-cursor="hidden"
 >
 	<div class="flex justify-between items-center px-3 py-2">

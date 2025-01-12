@@ -48,7 +48,7 @@
 	<div
 		class="h-full overflow-y-auto pt-64 min-h-screen pb-32 lg:py-16 flex flex-col justify-center 2xl:items-end items-center px-8 2xl:pr-16"
 	>
-		<h1 class="font-extrabold text-7xl lg:text-8xl text-center 2xl:text-right text-white mb-16">
+		<h1 class="font-extrabold text-5xl lg:text-8xl text-center 2xl:text-right text-white mb-16">
 			<span class="drop-shadow-lg">Svelte</span>
 			<strong class="block drop-shadow-lg text-indigo-950">Interactive</strong>
 			<span class="drop-shadow-lg text-indigo-950">Cursor</span>
@@ -63,7 +63,7 @@
 		<div class="flex flex-wrap justify-center gap-4 lg:max-w-lg max-w-md mt-8">
 			{#each itemsToCopy as { text }, idx (idx)}
 				<div class="flex w-full rounded-md shadow-sm">
-					<pre class="bg-gray-900 p-2 rounded-l-md text-sm flex w-full overflow-auto">
+					<pre class="bg-gray-900 p-2 rounded-l-md text-xs md:text-sm flex w-full overflow-auto">
 						<code>{@html text}</code>
 					</pre>
 					<button

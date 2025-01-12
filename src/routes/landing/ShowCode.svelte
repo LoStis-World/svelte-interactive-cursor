@@ -8,7 +8,6 @@
 
 	let { code }: Props = $props();
 	let showCode = $state(false);
-	$inspect(showCode);
 </script>
 
 <div class="flex flex-col items-center 2xl:items-start">
