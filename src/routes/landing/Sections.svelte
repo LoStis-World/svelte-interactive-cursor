@@ -124,7 +124,7 @@
 			Enhance your experience with interactive cursor styles based on the hovered element.
 		</p>
 	</header>
-	<div class="container grid gap-6 lg:gap-16 lg:grid-cols-3">
+	<div class="grid gap-6 lg:gap-16 lg:grid-cols-3">
 		{#each cards as { title, description, image }, idx}
 			<figure
 				class="flex items-center justify-center rounded-lg overflow-clip aspect-[8/10] motion-safe:transition-all transform-gpu motion-safe:duration-300 hover:scale-105"

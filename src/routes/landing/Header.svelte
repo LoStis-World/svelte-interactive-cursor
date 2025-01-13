@@ -46,7 +46,7 @@
 	]}
 >
 	<div
-		class="h-full 2xl:overflow-y-auto lg:pt-64 min-h-screen pb-32 lg:pb-16 flex flex-col justify-center 2xl:items-end items-center px-6 2xl:pr-16"
+		class="h-full 2xl:overflow-y-auto lg:pt-64 pt-32 min-h-screen pb-32 lg:pb-16 flex flex-col justify-center 2xl:items-end items-center px-6 2xl:pr-16 max-w-full"
 	>
 		<h1 class="font-extrabold text-5xl lg:text-8xl text-center 2xl:text-right text-white mb-16">
 			<span class="drop-shadow-lg">Svelte</span>
@@ -60,10 +60,10 @@
 			engaging and visually appealing.
 		</p>
 
-		<div class="flex flex-col items-center justify-center gap-4 mt-8 overflow-clip max-w-full">
+		<div class="flex flex-col items-center justify-center gap-4 mt-8 max-w-full">
 			{#each itemsToCopy as { text }, idx (idx)}
-				<div class="flex rounded-md shadow-sm w-full max-w-full overflow-auto">
-					<pre class="flex bg-gray-900 p-2 rounded-l-md text-xs flex-1 w-full">
+				<div class="flex rounded-md shadow-sm w-full overflow-auto">
+					<pre class="flex bg-gray-900 p-2 rounded-l-md text-xs flex-1">
 						<code>{@html text}</code>
 					</pre>
 					<button
