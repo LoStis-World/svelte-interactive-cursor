@@ -62,6 +62,12 @@ const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOption
 
 	const triggerAreas = document.querySelectorAll<HTMLElement>('[data-interactive-cursor-area]');
 
+	// Detect if position:fixed is anchored to a transformed ancestor instead of the viewport.
+	// A fixed element at top:0; left:0 with no transform reveals its containing block via getBoundingClientRect().
+	const fixedRect = cursor.getBoundingClientRect();
+	const fixedOffsetX = fixedRect.left;
+	const fixedOffsetY = fixedRect.top;
+
 	const animateCursor = (target: HTMLElement) => {
 		const newDataElement = target.closest('[data-interactive-cursor]') as HTMLElement | null;
 
@@ -119,8 +125,8 @@ const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOption
 	const startCursorTracking = (event: MouseEvent) => {
 		const { clientX, clientY, target } = event;
 		state.pointerCoords = {
-			x: clientX - cursor.offsetWidth / 2,
-			y: clientY - cursor.offsetHeight / 2
+			x: clientX - cursor.offsetWidth / 2 - fixedOffsetX,
+			y: clientY - cursor.offsetHeight / 2 - fixedOffsetY
 		};
 		state.isActive = true;
 		pendingTarget = target as HTMLElement;
