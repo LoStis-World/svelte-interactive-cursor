@@ -53,20 +53,20 @@
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.3.1",
-		"@sveltejs/adapter-static": "^3.0.8",
-		"@sveltejs/kit": "^2.15.1",
-		"@sveltejs/package": "^2.3.7",
+		"@sveltejs/adapter-static": "^3.0.10",
+		"@sveltejs/kit": "^2.53.4",
+		"@sveltejs/package": "^2.5.7",
 		"@sveltejs/vite-plugin-svelte": "^4.0.4",
-		"autoprefixer": "^10.4.20",
+		"autoprefixer": "^10.4.27",
 		"i": "^0.3.7",
-		"prettier": "^3.4.2",
-		"prettier-plugin-svelte": "^3.3.2",
+		"prettier": "^3.8.1",
+		"prettier-plugin-svelte": "^3.5.1",
 		"publint": "^0.2.12",
-		"svelte": "^5.16.0",
-		"svelte-check": "^4.1.1",
-		"svelte-highlight": "^7.8.2",
-		"tailwindcss": "^3.4.17",
-		"typescript": "^5.7.2",
-		"vite": "^5.4.11"
+		"svelte": "^5.53.7",
+		"svelte-check": "^4.4.4",
+		"svelte-highlight": "^7.9.0",
+		"tailwindcss": "^3.4.19",
+		"typescript": "^5.9.3",
+		"vite": "^5.4.21"
 	}
 }

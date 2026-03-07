@@ -2,27 +2,23 @@
 	import ShowCode from './ShowCode.svelte';
 	import Slider from './Slider.svelte';
 
-	import img1 from '/images/slider/image-1.webp';
-	import img2 from '/images/slider/image-2.webp';
-	import img3 from '/images/slider/image-3.webp';
-
 	const sectionDefaultOptions = 'py-32 lg:min-h-screen';
 
 	const cards = [
 		{
 			title: 'Slide 1',
 			description: 'Slide 1 description',
-			image: img1
+			image: '/images/slider/image-1.webp'
 		},
 		{
 			title: 'Slide 2',
 			description: 'Slide 2 description',
-			image: img2
+			image: '/images/slider/image-2.webp'
 		},
 		{
 			title: 'Slide 3',
 			description: 'Slide 3 description',
-			image: img3
+			image: '/images/slider/image-3.webp'
 		}
 	];
 </script>
