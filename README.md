@@ -12,17 +12,11 @@ The `InteractiveCursor` is a Svelte 5 component that provides a customizable, in
 
 ## Installation
 
-You can install the `InteractiveCursor` component using npm or pnpm:
-
-### Using npm
-
 ```bash
+# npm
 npm install @lostisworld/svelte-interactive-cursor
-```
 
-### Using pnpm
-
-```bash
+# pnpm
 pnpm add @lostisworld/svelte-interactive-cursor
 ```
 
@@ -32,32 +26,37 @@ pnpm add @lostisworld/svelte-interactive-cursor
 
 1. **Dynamic Resizing**: The cursor adjusts its size and position dynamically when hovering over elements specified in the `useDataElementRect` property.
 2. **Scaling on Interaction**: Scale transformations can be applied to the cursor when hovering over specified elements using `scaleOnActive`.
-3. **Animation Control**: Smooth animations with customizable duration using CSS transitions and `KeyframeAnimationOptions`.
-4. **Custom Icons**: Allows custom rendering inside the cursor element using the `children` property.
-5. **State Exposure**: Exposes `activeDataValue` to track the active interactive element and its name dynamically.
-6. **Responsive Design**: Automatically disables the interactive cursor for small screens or when reduced motion is preferred.
+3. **Animation Control**: Smooth animations with customizable `duration` and `easing` using the Web Animations API.
+4. **Custom Icons**: Allows custom rendering inside the cursor element using the `children` snippet.
+5. **State Exposure**: Exposes `activeDataValue` and `isActive` as bindable props to track cursor state in the parent.
+6. **Responsive Design**: Automatically disables the interactive cursor below a configurable `breakpoint` or when reduced motion is preferred.
+7. **Reduced Motion**: Dynamically responds to OS-level reduced motion changes mid-session — no page reload required.
+8. **Hide Native Cursor**: Optionally hides the OS cursor inside trigger areas via `hideNativeCursor`.
+9. **Performance**: Animations are throttled to one per frame via `requestAnimationFrame`, layout reads are cached, and the module is loaded only once across all instances.
 
 ---
 
-### Types
+## Types
 
-#### `ScaleOnActiveElement`
+### `ScaleOnActiveElement`
 
 ```ts
 type ScaleOnActiveElement = {
-	element: string; // The name of the element (value of `data-interactive-cursor`).
-	scaleMultiplicator?: number; // Scale factor to apply when the element is active.
+element: string;             // The name of the element (value of `data-interactive-cursor`).
+scaleMultiplicator?: number; // Scale factor to apply when the element is active. Default: 3.
 };
 ```
 
-#### `InteractiveCursorOptions`
+### `InteractiveCursorOptions`
 
 ```ts
 interface InteractiveCursorOptions {
-	defaultSize?: number; // Default cursor size in pixels.
-	scaleOnActive?: ScaleOnActiveElement[]; // Elements with scale factors.
-	duration?: number; // Animation duration in milliseconds.
-	useDataElementRect?: string[]; // Elements that trigger cursor resizing.
+defaultSize?: number;                  // Default cursor size in pixels. Default: 32.
+scaleOnActive?: ScaleOnActiveElement[]; // Elements with scale factors. Default: [].
+duration?: number;                     // Animation duration in milliseconds. Default: 500.
+easing?: string;                       // CSS easing for the animation. Default: 'linear'.
+useDataElementRect?: string[];         // Elements that trigger cursor resizing. Default: [].
+hideNativeCursor?: boolean;            // Hide the OS cursor inside trigger areas. Default: false.
 }
 ```
 
@@ -67,220 +66,194 @@ interface InteractiveCursorOptions {
 
 ### Basic Setup
 
-Import the `InteractiveCursor` component and include it in your Svelte application:
-
 ```svelte
 <script lang="ts">
-	import InteractiveCursor from '@lostisworld/svelte-interactive-cursor';
+import InteractiveCursor from '@lostisworld/svelte-interactive-cursor';
 </script>
 
 <div data-interactive-cursor-area>
-	<button data-interactive-cursor="btn">Hover me!</button>
+<button data-interactive-cursor="btn">Hover me!</button>
 </div>
 
 <InteractiveCursor
-	defaultSize={40}
-	duration={300}
-	scaleOnActive={[{ element: 'btn', scaleMultiplicator: 2 }]}
-	useDataElementRect={['btn']}
+defaultSize={40}
+duration={300}
+scaleOnActive={[{ element: 'btn', scaleMultiplicator: 2 }]}
+useDataElementRect={['btn']}
 />
 ```
 
 ### Advanced Example
 
-Here is an example with custom cursor behavior and styles:
-
 ```svelte
 <script lang="ts">
-	import InteractiveCursor, {
-		type ScaleOnActiveElement
-	} from '@lostisworld/svelte-interactive-cursor';
+import InteractiveCursor, {
+type ScaleOnActiveElement,
+type ActiveDataValue
+} from '@lostisworld/svelte-interactive-cursor';
 
-	let currentCursorState = $state({ activeDataName: '', activeDataElement: null });
+let currentCursorState: ActiveDataValue = $state({ activeDataName: '', activeDataElement: null });
+let cursorIsActive = $state(false);
 
-	// Custom cursor props
-	const scaleOnActive: ScaleOnActiveElement[] = [
-		{ element: 'image' },
-		{ element: 'video', scaleMultiplicator: 4 },
-		{ element: 'link' },
-		{ element: 'mixblend', scaleMultiplicator: 8 },
-		{ element: 'prevslide', scaleMultiplicator: 5 },
-		{ element: 'nextslide', scaleMultiplicator: 5 }
-	];
+const scaleOnActive: ScaleOnActiveElement[] = [
+{ element: 'image' },
+{ element: 'video', scaleMultiplicator: 4 },
+{ element: 'link' },
+{ element: 'mixblend', scaleMultiplicator: 8 }
+];
 
-	const customCursorProps = [
-		{ data: 'image', icon: '<svg>...</svg>' },
-		{ data: 'video', icon: '<svg>...</svg>', cursorClass: 'bg-red-500 text-white' },
-		{ data: 'link', icon: '<svg>...</svg>', cursorClass: 'bg-sky-500 text-white' },
-		{ data: 'tablist', cursorClass: 'rounded-none outline outline-2 outline-purple-500' }
-	];
+const customCursorProps = [
+{ data: 'image', icon: '<svg>...</svg>' },
+{ data: 'video', icon: '<svg>...</svg>', cursorClass: 'bg-red-500 text-white' },
+{ data: 'link', icon: '<svg>...</svg>', cursorClass: 'bg-sky-500 text-white' },
+{ data: 'tablist', cursorClass: 'rounded-none outline outline-2 outline-purple-500' }
+];
 </script>
 
-<div>
-	<!-- Interactive Cursor Target Areas -->
-	<section data-interactive-cursor-area>
-		<div data-interactive-cursor="image">Image</div>
-		<div data-interactive-cursor="video">Video</div>
-		<div data-interactive-cursor="link">Link</div>
-		<ul data-interactive-cursor="tablist">
-			<li>Tab 1</li>
-			<li>Tab 2</li>
-		</ul>
-	</section>
+<section data-interactive-cursor-area>
+<div data-interactive-cursor="image">Image</div>
+<div data-interactive-cursor="video">Video</div>
+<div data-interactive-cursor="link">Link</div>
+</section>
 
-	<!-- Interactive Cursor Component -->
-	<InteractiveCursor
-		bind:activeDataValue={currentCursorState}
-		{scaleOnActive}
-		useDataElementRect={['tablist']}
-		class="rounded-full flex items-center justify-center {currentCursorState.activeDataName === ''
-			? 'bg-white text-black'
-			: customCursorProps.find((state) => state.data === currentCursorState.activeDataName)
-					?.cursorClass || 'bg-white text-black'}"
-	>
-		{#each customCursorProps as { icon, data }}
-			{#if data === currentCursorState.activeDataName && icon}
-				{@html icon}
-			{/if}
-		{/each}
-	</InteractiveCursor>
-</div>
+<InteractiveCursor
+bind:activeDataValue={currentCursorState}
+bind:isActive={cursorIsActive}
+{scaleOnActive}
+useDataElementRect={['tablist']}
+duration={400}
+easing="linear"
+breakpoint={1024}
+class="rounded-full flex items-center justify-center {currentCursorState.activeDataName === ''
+? 'bg-white text-black'
+: customCursorProps.find((s) => s.data === currentCursorState.activeDataName)?.cursorClass ?? 'bg-white text-black'}"
+>
+{#each customCursorProps as { icon, data }}
+{#if data === currentCursorState.activeDataName && icon}
+{@html icon}
+{/if}
+{/each}
+</InteractiveCursor>
 ```
 
 ---
 
 ## Component Props
 
-| **Property**         | **Type**                                                     | **Default**                                       | **Description**                                                                                                                                |
-| -------------------- | ------------------------------------------------------------ | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `defaultSize`        | `number`                                                     | `32`                                              | The default size (in pixels) of the cursor.                                                                                                    |
-| `scaleOnActive`      | `ScaleOnActiveElement[]`                                     | `[]`                                              | Array of objects specifying elements and their respective scaling factors.                                                                     |
-| `duration`           | `number`                                                     | `500`                                             | Duration of the cursor's animation in milliseconds.                                                                                            |
-| `useDataElementRect` | `string[]`                                                   | `[]`                                              | Array of element names (matched by `data-interactive-cursor`) for which the cursor dynamically resizes and aligns to their bounding rectangle. |
-| `class`              | `string`                                                     | `''`                                              | Additional classes to apply to the cursor element.                                                                                             |
-| `children`           | `Snippet`                                                    | `undefined`                                       | Custom content to render inside the cursor.                                                                                                    |
-| `activeDataValue`    | `{ activeDataName: string; activeDataElement: HTMLElement }` | `{ activeDataName: '', activeDataElement: null }` | Tracks the currently active interactive element's name and DOM reference.                                                                      |
+| **Prop**             | **Type**                   | **Default**                                       | **Description**                                                                                            |
+| -------------------- | -------------------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `defaultSize`        | `number`                   | `32`                                              | Default cursor size in pixels.                                                                             |
+| `scaleOnActive`      | `ScaleOnActiveElement[]`   | `[]`                                              | Elements and their scale factors when hovered.                                                             |
+| `duration`           | `number`                   | `500`                                             | Animation duration in milliseconds.                                                                        |
+| `easing`             | `string`                   | `'linear'`                                        | CSS easing function for the animation (e.g. `'ease-out'`, `'cubic-bezier(0.4,0,0.2,1)'`).                |
+| `useDataElementRect` | `string[]`                 | `[]`                                              | Element names for which the cursor resizes and aligns to their bounding rectangle.                         |
+| `hideNativeCursor`   | `boolean`                  | `false`                                           | Hides the OS cursor inside trigger areas when `true`.                                                      |
+| `breakpoint`         | `number`                   | `1024`                                            | Minimum viewport width (px) below which the cursor is disabled.                                            |
+| `class`              | `string`                   | `''`                                              | Additional CSS classes to apply to the cursor element.                                                     |
+| `children`           | `Snippet`                  | `undefined`                                       | Custom content rendered inside the cursor.                                                                 |
+| `activeDataValue`    | `ActiveDataValue` bindable | `{ activeDataName: '', activeDataElement: null }` | Bindable. Tracks the active `data-interactive-cursor` name and its DOM element.                            |
+| `isActive`           | `boolean` bindable         | `false`                                           | Bindable. `true` while the cursor is inside a trigger area.                                                |
 
 ---
 
 ## Data Attributes
 
-### Cursor Areas
-
-- Add `data-interactive-cursor-area` to define areas where the cursor can interact.
-- Add `data-interactive-cursor="value"` to target specific elements and associate them with custom cursor behaviors.
-
-Example:
+| **Attribute**                     | **Description**                                                                           |
+| --------------------------------- | ----------------------------------------------------------------------------------------- |
+| `data-interactive-cursor-area`    | Marks a container as a cursor tracking zone. Mouse enter/leave is tracked here.           |
+| `data-interactive-cursor="value"` | Marks a child element with a name used to match `scaleOnActive` and `useDataElementRect`. |
 
 ```html
 <div data-interactive-cursor-area>
-	<div data-interactive-cursor="image">Image Element</div>
-	<div data-interactive-cursor="video">Video Element</div>
+<div data-interactive-cursor="image">Image Element</div>
+<div data-interactive-cursor="card">Card Element</div>
 </div>
-```
-
-### Scaling on Specific Elements
-
-To make the cursor scale when hovering over specific elements, define those elements using the `data-interactive-cursor` attribute.
-
-```svelte
-<main data-interactive-cursor-area>
-	<button data-interactive-cursor="button">Hover Me</button>
-	<InteractiveCursor
-		defaultSize={50}
-		scaleOnActive={[{ element: 'button', scaleMultiplicator: 2 }]}
-	/>
-</main>
-```
-
----
-
-### Adapting to Element Size
-
-Enable the cursor to adapt its size and position to match specific elements.
-
-```svelte
-<main data-interactive-cursor-area>
-	<div class="card" data-interactive-cursor="card">Hover me!</div>
-	<InteractiveCursor useDataElementRect={['card']} />
-</main>
 ```
 
 ---
 
 ## Styling
 
-The `InteractiveCursor` component includes default styles that can be customized using the `class` prop or overriding CSS variables.
-
 ### Default Classes
 
-- `.lw-interactive-cursor`: Base cursor styles.
-- `.lw-interactive-cursor.active`: Active state styles.
+- `.lw-interactive-cursor` — base cursor styles (fixed position, hidden by default).
+- `.lw-interactive-cursor.active` — applied while the cursor is inside a trigger area.
 
-### Example Custom Styles
+### CSS Variables
+
+| **Variable** | **Default** | **Description**          |
+| ------------ | ----------- | ------------------------ |
+| `--size`     | `32px`      | Driven by `defaultSize`. |
+
+### Example
 
 ```css
 .lw-interactive-cursor {
-	background-color: white;
-	color: black;
+background-color: white;
+border-radius: 50%;
 }
 .lw-interactive-cursor.active {
-	background-color: blue;
-	color: white;
+background-color: blue;
 }
 ```
 
 ---
 
-### Helper Function: `interactiveCursor`
+## Advanced: `interactiveCursor` function
 
-For advanced customization, you can use the `interactiveCursor` function to programmatically control the cursor.
+For headless / programmatic use, the core function is exported directly:
 
-#### Parameters
+```ts
+import { interactiveCursorFN } from '@lostisworld/svelte-interactive-cursor';
 
-| Parameter | Type                       | Description                                             |
-| --------- | -------------------------- | ------------------------------------------------------- |
-| `cursor`  | `HTMLElement`              | Reference to the cursor DOM element.                    |
-| `options` | `InteractiveCursorOptions` | Configuration options for the cursor (see table below). |
+const cursor = interactiveCursorFN(cursorElement, {
+defaultSize: 32,
+scaleOnActive: [{ element: 'btn', scaleMultiplicator: 2 }],
+duration: 500,
+easing: 'linear',
+useDataElementRect: ['card'],
+hideNativeCursor: false
+});
 
-#### Configuration Options
+cursor.init();
 
-| Option               | Type                     | Default | Description                                            |
-| -------------------- | ------------------------ | ------- | ------------------------------------------------------ |
-| `defaultSize`        | `number`                 | `32`    | Default cursor size in pixels.                         |
-| `scaleOnActive`      | `ScaleOnActiveElement[]` | `[]`    | Elements that trigger scaling when hovered over.       |
-| `duration`           | `number`                 | `500`   | Animation duration in milliseconds.                    |
-| `useDataElementRect` | `string[]`               | `[]`    | Elements for which bounding rect sizes should be used. |
+// Later:
+cursor.destroy();
+```
+
+### Returned object
+
+| **Member**        | **Type**                     | **Description**                               |
+| ----------------- | ---------------------------- | --------------------------------------------- |
+| `isActive`        | `boolean` (readonly)         | Whether the cursor is inside a trigger area.  |
+| `activeDataValue` | `ActiveDataValue` (readonly) | Current active element name and reference.    |
+| `init()`          | `() => void`                 | Attach event listeners and start tracking.    |
+| `destroy()`       | `() => void`                 | Remove event listeners and cancel animations. |
 
 ---
 
-## Events and Methods
+## Performance
 
-### Properties
-
-- `isActive`: Boolean indicating whether the cursor is currently active.
-- `activeDataValue`: Tracks the current `data-interactive-cursor` name and element.
-
-### Methods
-
-- `init()`: Initializes event listeners and cursor tracking.
-- `destroy()`: Cleans up event listeners and animations.
+- **RAF throttling** — `mousemove` is throttled to one animation call per frame via `requestAnimationFrame`, preventing excessive work at 200+ events/sec.
+- **Cached layout reads** — `offsetWidth`/`offsetHeight` are read once at init; `getBoundingClientRect()` is only called when the hovered element changes.
+- **O(1) scale lookup** — `scaleOnActive` is converted to a `Map` at init for constant-time lookups per frame.
+- **Single module import** — the core module is loaded once across all component instances on the page via a shared Promise cache.
+- **`will-change: transform`** — applied only on `.active` to promote the element to a compositor layer while animating.
+- **Resize/scroll rect invalidation** — the cached bounding rect is recalculated on `resize` and `scroll` so `useDataElementRect` positions remain accurate.
 
 ---
 
 ## Notes
 
-- **Reduced Motion**: Automatically disables animations for users with reduced motion preferences.
-- **Responsive Design**: Disables the interactive cursor on smaller screens (e.g., mobile devices).
-- Always ensure the `data-interactive-cursor-area` attribute is present on interactive parent elements.
-
-This documentation provides clear guidance on integrating and customizing the `InteractiveCursor` component for a variety of use cases. Let me know if you'd like further refinements!
+- **Reduced Motion**: Automatically disabled on mount if the user prefers reduced motion. Also responds to OS-level changes mid-session without a page reload.
+- **Responsive**: Disabled below the configured `breakpoint` (default `1024px`).
+- Always place `data-interactive-cursor-area` on the parent container of your interactive elements.
 
 ---
 
 ## Contributing
 
-Contributions are welcome! Please ensure all changes are well-documented and tested.
+Contributions are welcome!
 
 1. Fork the repository.
 2. Create a new branch for your feature or bugfix.
@@ -292,5 +265,3 @@ Contributions are welcome! Please ensure all changes are well-documented and tes
 ## License
 
 This project is licensed under the [MIT License](https://github.com/LoStis-World/svelte-interactive-cursor/blob/main/LICENCE).
-
-Here’s the updated documentation for your `InteractiveCursor` component based on the provided code:

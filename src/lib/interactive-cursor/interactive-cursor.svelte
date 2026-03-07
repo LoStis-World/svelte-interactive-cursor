@@ -2,9 +2,21 @@
 	import { type Snippet, onMount } from 'svelte';
 	import type { InteractiveCursorOptions, InitialCursor } from './interactiveCursor.svelte.js';
 
+	// Cache the dynamic import at module level — shared across all component instances
+	let moduleCache:
+		| Promise<{
+				interactiveCursor: (
+					cursor: HTMLElement,
+					options: InteractiveCursorOptions
+				) => InitialCursor;
+		  }>
+		| undefined;
+
 	interface Props extends InteractiveCursorOptions {
 		class?: string;
 		children?: Snippet;
+		breakpoint?: number;
+		isActive?: boolean;
 		activeDataValue?: {
 			activeDataName: string;
 			activeDataElement: HTMLElement | null;
@@ -16,52 +28,72 @@
 		scaleOnActive = [],
 		defaultSize = 32,
 		duration = 500,
+		easing = 'linear',
 		useDataElementRect = [],
+		hideNativeCursor = false,
+		breakpoint = 1024,
 		class: classes,
 		activeDataValue = $bindable({ activeDataName: '', activeDataElement: null }),
+		isActive = $bindable(false),
 		children
 	}: Props = $props();
 
 	// DOM element reference
 	let cursor: HTMLDivElement;
 	let initialCursor = $state<InitialCursor | null>(null);
-	// Dynamic cursor props
-	let isActive = $derived(initialCursor?.isActive ?? false);
 
 	onMount(() => {
-		// check if cursor is available and if reduced motion is enabled or if there is no interactive cursor area
 		if (
 			!cursor ||
-			window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
 			!document.querySelector('[data-interactive-cursor-area]') ||
-			window.innerWidth < 1024
+			window.innerWidth < breakpoint
 		)
 			return;
 
-		// import the interactive cursor module
-		import('./interactiveCursor.svelte.js').then(({ interactiveCursor }) => {
+		const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+		if (reducedMotionQuery.matches) return;
+
+		// Re-use the cached import if already loaded, otherwise start a new one
+		moduleCache ??= import('./interactiveCursor.svelte.js');
+		moduleCache.then(({ interactiveCursor }) => {
 			const options: InteractiveCursorOptions = {
 				defaultSize,
 				scaleOnActive,
 				duration,
-				useDataElementRect
+				easing,
+				useDataElementRect,
+				hideNativeCursor
 			};
 
 			initialCursor = interactiveCursor(cursor, options);
 			initialCursor?.init();
 		});
 
-		// cleanup
-		return () => initialCursor?.destroy();
+		// Destroy cursor if the user enables reduced motion mid-session
+		const handleReducedMotionChange = (e: MediaQueryListEvent) => {
+			if (e.matches) {
+				initialCursor?.destroy();
+				initialCursor = null;
+			}
+		};
+		reducedMotionQuery.addEventListener('change', handleReducedMotionChange);
+
+		return () => {
+			initialCursor?.destroy();
+			reducedMotionQuery.removeEventListener('change', handleReducedMotionChange);
+		};
 	});
 
-	// update active data value
+	// sync bindable props from internal cursor state
 	$effect(() => {
 		if (initialCursor) {
 			activeDataValue = {
-				activeDataName: initialCursor?.activeDataValue.activeDataName ?? '',
-				activeDataElement: initialCursor?.activeDataValue.activeDataElement ?? null
+				activeDataName: initialCursor.activeDataValue.activeDataName,
+				activeDataElement: initialCursor.activeDataValue.activeDataElement
 			};
+			isActive = initialCursor.isActive;
+		} else {
+			isActive = false;
 		}
 	});
 </script>
@@ -69,7 +101,7 @@
 <div
 	bind:this={cursor}
 	style="--size:{defaultSize}px;"
-	class="lw-interactive-cursor {classes}"
+	class="lw-interactive-cursor {classes ?? ''}"
 	class:active={isActive}
 	aria-hidden="true"
 >
@@ -87,11 +119,11 @@
 		height: var(--size);
 		opacity: 0;
 		visibility: hidden;
-		will-change: auto;
 	}
 	.lw-interactive-cursor.active {
 		opacity: 1;
 		visibility: visible;
+		will-change: auto;
 	}
 
 	@media (prefers-reduced-motion: no-preference) {

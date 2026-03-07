@@ -2,7 +2,9 @@ interface InteractiveCursorOptions {
 	defaultSize?: number;
 	scaleOnActive?: ScaleOnActiveElement[];
 	duration?: number;
+	easing?: string;
 	useDataElementRect?: string[];
+	hideNativeCursor?: boolean;
 }
 
 type ScaleOnActiveElement = {
@@ -32,8 +34,17 @@ type InitialCursor = {
 };
 
 const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOptions) => {
-	// set default cursor options
-	const { defaultSize, scaleOnActive = [], duration, useDataElementRect = [] } = options;
+	const {
+		defaultSize,
+		scaleOnActive = [],
+		duration,
+		easing,
+		useDataElementRect = [],
+		hideNativeCursor = true
+	} = options;
+
+	// O(1) lookup map instead of repeated Array.find() on every frame
+	const scaleMap = new Map(scaleOnActive.map((s) => [s.element, s.scaleMultiplicator ?? 3]));
 
 	// set initial state
 	const state = $state<CursorState>({
@@ -46,22 +57,34 @@ const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOption
 	});
 
 	let currentAnimation: Animation | undefined;
+	let rafId: number | undefined;
+	let pendingTarget: HTMLElement | null = null;
+
+	// Cache cursor half-size once — reading offsetWidth/offsetHeight forces layout
+	const cursorHalfWidth = cursor.offsetWidth / 2;
+	const cursorHalfHeight = cursor.offsetHeight / 2;
+
 	const triggerAreas = document.querySelectorAll<HTMLElement>('[data-interactive-cursor-area]');
 
 	const animateCursor = (target: HTMLElement) => {
-		if (target.closest('[data-interactive-cursor]')) {
-			state.activeDataElement = target.closest('[data-interactive-cursor]') as HTMLElement;
-			state.activeDataName = state.activeDataElement.getAttribute('data-interactive-cursor') || '';
-			state.isHoveringDataElementRect =
-				state.activeDataName !== '' && useDataElementRect.includes(state.activeDataName);
-			state.dataElementRect = state.activeDataElement.getBoundingClientRect();
-		} else {
+		const newDataElement = target.closest('[data-interactive-cursor]') as HTMLElement | null;
+
+		if (newDataElement) {
+			const newDataName = newDataElement.getAttribute('data-interactive-cursor') || '';
+			// Only recalculate rect when the hovered element actually changes — avoids forced reflow on every move
+			if (newDataElement !== state.activeDataElement) {
+				state.activeDataElement = newDataElement;
+				state.activeDataName = newDataName;
+				state.dataElementRect = newDataElement.getBoundingClientRect();
+				state.isHoveringDataElementRect =
+					newDataName !== '' && useDataElementRect.includes(newDataName);
+			}
+		} else if (state.activeDataElement !== null) {
 			state.activeDataElement = null;
 			state.activeDataName = '';
 			state.isHoveringDataElementRect = false;
 		}
 
-		// Get cursor element and set animation options
 		const animationKeyframes = () => {
 			if (state.isHoveringDataElementRect) {
 				return {
@@ -71,16 +94,12 @@ const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOption
 				};
 			}
 
-			if (scaleOnActive.find((key) => key.element === state.activeDataName)) {
-				// get the active size multiplicator
-				const getActiveSizeMultiplicator = scaleOnActive.find(
-					(key) => key.element === state.activeDataName
-				)?.scaleMultiplicator;
-
+			if (scaleMap.has(state.activeDataName)) {
+				const mult = scaleMap.get(state.activeDataName)!;
 				return {
 					width: `${defaultSize}px`,
 					height: `${defaultSize}px`,
-					transform: `translate3D(${state.pointerCoords.x}px, ${state.pointerCoords.y}px, 0) scale3D(${getActiveSizeMultiplicator ?? 3}, ${getActiveSizeMultiplicator ?? 3}, 1)`
+					transform: `translate3D(${state.pointerCoords.x}px, ${state.pointerCoords.y}px, 0) scale3D(${mult}, ${mult}, 1)`
 				};
 			}
 
@@ -92,25 +111,29 @@ const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOption
 		};
 
 		const animationTiming: KeyframeAnimationOptions = {
-			duration: duration,
+			duration,
+			easing,
 			fill: 'forwards' as FillMode
 		};
 
-		// animate cursor
 		currentAnimation = cursor.animate(animationKeyframes(), animationTiming);
 	};
 
-	// start cursor tracking
+	// start cursor tracking — throttled to one animation call per frame via RAF
 	const startCursorTracking = (event: MouseEvent) => {
 		const { clientX, clientY, target } = event;
 		state.pointerCoords = {
-			x: clientX - cursor.offsetWidth / 2,
-			y: clientY - cursor.offsetHeight / 2
+			x: clientX - cursorHalfWidth,
+			y: clientY - cursorHalfHeight
 		};
 		state.isActive = true;
+		pendingTarget = target as HTMLElement;
 
-		// Get the active data element
-		animateCursor(target as HTMLElement);
+		if (rafId !== undefined) return;
+		rafId = requestAnimationFrame(() => {
+			if (pendingTarget) animateCursor(pendingTarget);
+			rafId = undefined;
+		});
 	};
 
 	// stop cursor tracking
@@ -120,7 +143,18 @@ const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOption
 		state.activeDataElement = null;
 		state.activeDataName = '';
 		state.isHoveringDataElementRect = false;
+		if (rafId !== undefined) {
+			cancelAnimationFrame(rafId);
+			rafId = undefined;
+		}
 		currentAnimation?.cancel();
+	};
+
+	// Invalidate cached rect on resize/scroll so useDataElementRect stays accurate
+	const invalidateRect = () => {
+		if (state.activeDataElement) {
+			state.dataElementRect = state.activeDataElement.getBoundingClientRect();
+		}
 	};
 
 	// setup event listeners
@@ -128,7 +162,10 @@ const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOption
 		triggerAreas.forEach((triggerArea) => {
 			triggerArea.addEventListener('mousemove', startCursorTracking, { passive: true });
 			triggerArea.addEventListener('mouseleave', stopCursorTracking);
+			if (hideNativeCursor) triggerArea.style.cursor = 'none';
 		});
+		window.addEventListener('resize', invalidateRect, { passive: true });
+		window.addEventListener('scroll', invalidateRect, { passive: true, capture: true });
 	};
 
 	// cleanup event listeners
@@ -136,7 +173,10 @@ const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOption
 		triggerAreas.forEach((triggerArea) => {
 			triggerArea.removeEventListener('mousemove', startCursorTracking);
 			triggerArea.removeEventListener('mouseleave', stopCursorTracking);
+			if (hideNativeCursor) triggerArea.style.cursor = '';
 		});
+		window.removeEventListener('resize', invalidateRect);
+		window.removeEventListener('scroll', invalidateRect, { capture: true });
 	};
 
 	return {
