@@ -42,8 +42,8 @@ pnpm add @lostisworld/svelte-interactive-cursor
 
 ```ts
 type ScaleOnActiveElement = {
-element: string;             // The name of the element (value of `data-interactive-cursor`).
-scaleMultiplicator?: number; // Scale factor to apply when the element is active. Default: 3.
+	element: string; // The name of the element (value of `data-interactive-cursor`).
+	scaleMultiplicator?: number; // Scale factor to apply when the element is active. Default: 3.
 };
 ```
 
@@ -51,12 +51,12 @@ scaleMultiplicator?: number; // Scale factor to apply when the element is active
 
 ```ts
 interface InteractiveCursorOptions {
-defaultSize?: number;                  // Default cursor size in pixels. Default: 32.
-scaleOnActive?: ScaleOnActiveElement[]; // Elements with scale factors. Default: [].
-duration?: number;                     // Animation duration in milliseconds. Default: 500.
-easing?: string;                       // CSS easing for the animation. Default: 'linear'.
-useDataElementRect?: string[];         // Elements that trigger cursor resizing. Default: [].
-hideNativeCursor?: boolean;            // Hide the OS cursor inside trigger areas. Default: false.
+	defaultSize?: number; // Default cursor size in pixels. Default: 32.
+	scaleOnActive?: ScaleOnActiveElement[]; // Elements with scale factors. Default: [].
+	duration?: number; // Animation duration in milliseconds. Default: 500.
+	easing?: string; // CSS easing for the animation. Default: 'linear'.
+	useDataElementRect?: string[]; // Elements that trigger cursor resizing. Default: [].
+	hideNativeCursor?: boolean; // Hide the OS cursor inside trigger areas. Default: false.
 }
 ```
 
@@ -68,18 +68,18 @@ hideNativeCursor?: boolean;            // Hide the OS cursor inside trigger area
 
 ```svelte
 <script lang="ts">
-import InteractiveCursor from '@lostisworld/svelte-interactive-cursor';
+	import InteractiveCursor from '@lostisworld/svelte-interactive-cursor';
 </script>
 
 <div data-interactive-cursor-area>
-<button data-interactive-cursor="btn">Hover me!</button>
+	<button data-interactive-cursor="btn">Hover me!</button>
 </div>
 
 <InteractiveCursor
-defaultSize={40}
-duration={300}
-scaleOnActive={[{ element: 'btn', scaleMultiplicator: 2 }]}
-useDataElementRect={['btn']}
+	defaultSize={40}
+	duration={300}
+	scaleOnActive={[{ element: 'btn', scaleMultiplicator: 2 }]}
+	useDataElementRect={['btn']}
 />
 ```
 
@@ -87,52 +87,53 @@ useDataElementRect={['btn']}
 
 ```svelte
 <script lang="ts">
-import InteractiveCursor, {
-type ScaleOnActiveElement,
-type ActiveDataValue
-} from '@lostisworld/svelte-interactive-cursor';
+	import InteractiveCursor, {
+		type ScaleOnActiveElement,
+		type ActiveDataValue
+	} from '@lostisworld/svelte-interactive-cursor';
 
-let currentCursorState: ActiveDataValue = $state({ activeDataName: '', activeDataElement: null });
-let cursorIsActive = $state(false);
+	let currentCursorState: ActiveDataValue = $state({ activeDataName: '', activeDataElement: null });
+	let cursorIsActive = $state(false);
 
-const scaleOnActive: ScaleOnActiveElement[] = [
-{ element: 'image' },
-{ element: 'video', scaleMultiplicator: 4 },
-{ element: 'link' },
-{ element: 'mixblend', scaleMultiplicator: 8 }
-];
+	const scaleOnActive: ScaleOnActiveElement[] = [
+		{ element: 'image' },
+		{ element: 'video', scaleMultiplicator: 4 },
+		{ element: 'link' },
+		{ element: 'mixblend', scaleMultiplicator: 8 }
+	];
 
-const customCursorProps = [
-{ data: 'image', icon: '<svg>...</svg>' },
-{ data: 'video', icon: '<svg>...</svg>', cursorClass: 'bg-red-500 text-white' },
-{ data: 'link', icon: '<svg>...</svg>', cursorClass: 'bg-sky-500 text-white' },
-{ data: 'tablist', cursorClass: 'rounded-none outline outline-2 outline-purple-500' }
-];
+	const customCursorProps = [
+		{ data: 'image', icon: '<svg>...</svg>' },
+		{ data: 'video', icon: '<svg>...</svg>', cursorClass: 'bg-red-500 text-white' },
+		{ data: 'link', icon: '<svg>...</svg>', cursorClass: 'bg-sky-500 text-white' },
+		{ data: 'tablist', cursorClass: 'rounded-none outline outline-2 outline-purple-500' }
+	];
 </script>
 
 <section data-interactive-cursor-area>
-<div data-interactive-cursor="image">Image</div>
-<div data-interactive-cursor="video">Video</div>
-<div data-interactive-cursor="link">Link</div>
+	<div data-interactive-cursor="image">Image</div>
+	<div data-interactive-cursor="video">Video</div>
+	<div data-interactive-cursor="link">Link</div>
 </section>
 
 <InteractiveCursor
-bind:activeDataValue={currentCursorState}
-bind:isActive={cursorIsActive}
-{scaleOnActive}
-useDataElementRect={['tablist']}
-duration={400}
-easing="linear"
-breakpoint={1024}
-class="rounded-full flex items-center justify-center {currentCursorState.activeDataName === ''
-? 'bg-white text-black'
-: customCursorProps.find((s) => s.data === currentCursorState.activeDataName)?.cursorClass ?? 'bg-white text-black'}"
+	bind:activeDataValue={currentCursorState}
+	bind:isActive={cursorIsActive}
+	{scaleOnActive}
+	useDataElementRect={['tablist']}
+	duration={400}
+	easing="linear"
+	breakpoint={1024}
+	class="rounded-full flex items-center justify-center {currentCursorState.activeDataName === ''
+		? 'bg-white text-black'
+		: (customCursorProps.find((s) => s.data === currentCursorState.activeDataName)?.cursorClass ??
+			'bg-white text-black')}"
 >
-{#each customCursorProps as { icon, data }}
-{#if data === currentCursorState.activeDataName && icon}
-{@html icon}
-{/if}
-{/each}
+	{#each customCursorProps as { icon, data }}
+		{#if data === currentCursorState.activeDataName && icon}
+			{@html icon}
+		{/if}
+	{/each}
 </InteractiveCursor>
 ```
 
@@ -140,19 +141,19 @@ class="rounded-full flex items-center justify-center {currentCursorState.activeD
 
 ## Component Props
 
-| **Prop**             | **Type**                   | **Default**                                       | **Description**                                                                                            |
-| -------------------- | -------------------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `defaultSize`        | `number`                   | `32`                                              | Default cursor size in pixels.                                                                             |
-| `scaleOnActive`      | `ScaleOnActiveElement[]`   | `[]`                                              | Elements and their scale factors when hovered.                                                             |
-| `duration`           | `number`                   | `500`                                             | Animation duration in milliseconds.                                                                        |
-| `easing`             | `string`                   | `'linear'`                                        | CSS easing function for the animation (e.g. `'ease-out'`, `'cubic-bezier(0.4,0,0.2,1)'`).                |
-| `useDataElementRect` | `string[]`                 | `[]`                                              | Element names for which the cursor resizes and aligns to their bounding rectangle.                         |
-| `hideNativeCursor`   | `boolean`                  | `false`                                           | Hides the OS cursor inside trigger areas when `true`.                                                      |
-| `breakpoint`         | `number`                   | `1024`                                            | Minimum viewport width (px) below which the cursor is disabled.                                            |
-| `class`              | `string`                   | `''`                                              | Additional CSS classes to apply to the cursor element.                                                     |
-| `children`           | `Snippet`                  | `undefined`                                       | Custom content rendered inside the cursor.                                                                 |
-| `activeDataValue`    | `ActiveDataValue` bindable | `{ activeDataName: '', activeDataElement: null }` | Bindable. Tracks the active `data-interactive-cursor` name and its DOM element.                            |
-| `isActive`           | `boolean` bindable         | `false`                                           | Bindable. `true` while the cursor is inside a trigger area.                                                |
+| **Prop**             | **Type**                   | **Default**                                       | **Description**                                                                           |
+| -------------------- | -------------------------- | ------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `defaultSize`        | `number`                   | `32`                                              | Default cursor size in pixels.                                                            |
+| `scaleOnActive`      | `ScaleOnActiveElement[]`   | `[]`                                              | Elements and their scale factors when hovered.                                            |
+| `duration`           | `number`                   | `500`                                             | Animation duration in milliseconds.                                                       |
+| `easing`             | `string`                   | `'linear'`                                        | CSS easing function for the animation (e.g. `'ease-out'`, `'cubic-bezier(0.4,0,0.2,1)'`). |
+| `useDataElementRect` | `string[]`                 | `[]`                                              | Element names for which the cursor resizes and aligns to their bounding rectangle.        |
+| `hideNativeCursor`   | `boolean`                  | `false`                                           | Hides the OS cursor inside trigger areas when `true`.                                     |
+| `breakpoint`         | `number`                   | `1024`                                            | Minimum viewport width (px) below which the cursor is disabled.                           |
+| `class`              | `string`                   | `''`                                              | Additional CSS classes to apply to the cursor element.                                    |
+| `children`           | `Snippet`                  | `undefined`                                       | Custom content rendered inside the cursor.                                                |
+| `activeDataValue`    | `ActiveDataValue` bindable | `{ activeDataName: '', activeDataElement: null }` | Bindable. Tracks the active `data-interactive-cursor` name and its DOM element.           |
+| `isActive`           | `boolean` bindable         | `false`                                           | Bindable. `true` while the cursor is inside a trigger area.                               |
 
 ---
 
@@ -165,8 +166,8 @@ class="rounded-full flex items-center justify-center {currentCursorState.activeD
 
 ```html
 <div data-interactive-cursor-area>
-<div data-interactive-cursor="image">Image Element</div>
-<div data-interactive-cursor="card">Card Element</div>
+	<div data-interactive-cursor="image">Image Element</div>
+	<div data-interactive-cursor="card">Card Element</div>
 </div>
 ```
 
@@ -189,11 +190,11 @@ class="rounded-full flex items-center justify-center {currentCursorState.activeD
 
 ```css
 .lw-interactive-cursor {
-background-color: white;
-border-radius: 50%;
+	background-color: white;
+	border-radius: 50%;
 }
 .lw-interactive-cursor.active {
-background-color: blue;
+	background-color: blue;
 }
 ```
 
@@ -207,12 +208,12 @@ For headless / programmatic use, the core function is exported directly:
 import { interactiveCursorFN } from '@lostisworld/svelte-interactive-cursor';
 
 const cursor = interactiveCursorFN(cursorElement, {
-defaultSize: 32,
-scaleOnActive: [{ element: 'btn', scaleMultiplicator: 2 }],
-duration: 500,
-easing: 'linear',
-useDataElementRect: ['card'],
-hideNativeCursor: false
+	defaultSize: 32,
+	scaleOnActive: [{ element: 'btn', scaleMultiplicator: 2 }],
+	duration: 500,
+	easing: 'linear',
+	useDataElementRect: ['card'],
+	hideNativeCursor: false
 });
 
 cursor.init();
