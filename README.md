@@ -218,7 +218,7 @@ const cursor = interactiveCursorFN(cursorElement, {
 
 cursor.init();
 
-// Later:
+// destroy:
 cursor.destroy();
 ```
 
