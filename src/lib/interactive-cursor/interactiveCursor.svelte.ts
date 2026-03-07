@@ -60,10 +60,6 @@ const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOption
 	let rafId: number | undefined;
 	let pendingTarget: HTMLElement | null = null;
 
-	// Cache cursor half-size once — reading offsetWidth/offsetHeight forces layout
-	const cursorHalfWidth = cursor.offsetWidth / 2;
-	const cursorHalfHeight = cursor.offsetHeight / 2;
-
 	const triggerAreas = document.querySelectorAll<HTMLElement>('[data-interactive-cursor-area]');
 
 	const animateCursor = (target: HTMLElement) => {
@@ -123,8 +119,8 @@ const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOption
 	const startCursorTracking = (event: MouseEvent) => {
 		const { clientX, clientY, target } = event;
 		state.pointerCoords = {
-			x: clientX - cursorHalfWidth,
-			y: clientY - cursorHalfHeight
+			x: clientX - cursor.offsetWidth / 2,
+			y: clientY - cursor.offsetHeight / 2
 		};
 		state.isActive = true;
 		pendingTarget = target as HTMLElement;
