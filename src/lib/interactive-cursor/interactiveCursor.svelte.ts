@@ -62,11 +62,33 @@ const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOption
 
 	const triggerAreas = document.querySelectorAll<HTMLElement>('[data-interactive-cursor-area]');
 
-	// Detect if position:fixed is anchored to a transformed ancestor instead of the viewport.
-	// A fixed element at top:0; left:0 with no transform reveals its containing block via getBoundingClientRect().
-	const fixedRect = cursor.getBoundingClientRect();
-	const fixedOffsetX = fixedRect.left;
-	const fixedOffsetY = fixedRect.top;
+	// Sentinel: a position:fixed sibling at top:0;left:0.
+	// If any ancestor has transform/filter/will-change, it becomes the fixed
+	// containing block. The sentinel's getBoundingClientRect() always reveals
+	// where (0,0) of that containing block sits in the viewport — including
+	// when that ancestor has been scrolled.
+	const sentinel = cursor.parentElement!.insertBefore(
+		Object.assign(document.createElement('div'), {
+			setAttribute: undefined
+		}),
+		cursor
+	) as HTMLDivElement;
+	sentinel.style.cssText =
+		'position:fixed;top:0;left:0;width:1px;height:1px;pointer-events:none;visibility:hidden;opacity:0;';
+
+	let cbOffsetX = 0;
+	let cbOffsetY = 0;
+
+	const updateContainingBlockOffset = () => {
+		const r = sentinel.getBoundingClientRect();
+		cbOffsetX = r.left;
+		cbOffsetY = r.top;
+	};
+	updateContainingBlockOffset();
+
+	// Cache cursor half-size once
+	const cursorHalfWidth = cursor.offsetWidth / 2;
+	const cursorHalfHeight = cursor.offsetHeight / 2;
 
 	const animateCursor = (target: HTMLElement) => {
 		const newDataElement = target.closest('[data-interactive-cursor]') as HTMLElement | null;
@@ -92,7 +114,7 @@ const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOption
 				return {
 					width: `${state.dataElementRect!.width}px`,
 					height: `${state.dataElementRect!.height}px`,
-					transform: `translate3D(${state.dataElementRect!.left - fixedOffsetX}px, ${state.dataElementRect!.top - fixedOffsetY}px, 0) scale3D(1,1,1)`
+					transform: `translate3D(${state.dataElementRect!.left - cbOffsetX}px, ${state.dataElementRect!.top - cbOffsetY}px, 0) scale3D(1,1,1)`
 				};
 			}
 
@@ -125,8 +147,8 @@ const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOption
 	const startCursorTracking = (event: MouseEvent) => {
 		const { clientX, clientY, target } = event;
 		state.pointerCoords = {
-			x: clientX - cursor.offsetWidth / 2 - fixedOffsetX,
-			y: clientY - cursor.offsetHeight / 2 - fixedOffsetY
+			x: clientX - cursorHalfWidth - cbOffsetX,
+			y: clientY - cursorHalfHeight - cbOffsetY
 		};
 		state.isActive = true;
 		pendingTarget = target as HTMLElement;
@@ -154,6 +176,7 @@ const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOption
 
 	// Invalidate cached rect on resize/scroll so useDataElementRect stays accurate
 	const invalidateRect = () => {
+		updateContainingBlockOffset();
 		if (state.activeDataElement) {
 			state.dataElementRect = state.activeDataElement.getBoundingClientRect();
 		}
@@ -172,6 +195,7 @@ const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOption
 
 	// cleanup event listeners
 	const cleanup = () => {
+		sentinel.remove();
 		triggerAreas.forEach((triggerArea) => {
 			triggerArea.removeEventListener('mousemove', startCursorTracking);
 			triggerArea.removeEventListener('mouseleave', stopCursorTracking);
