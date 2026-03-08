@@ -92,7 +92,7 @@ const interactiveCursor = (cursor: HTMLElement, options: InteractiveCursorOption
 				return {
 					width: `${state.dataElementRect!.width}px`,
 					height: `${state.dataElementRect!.height}px`,
-					transform: `translate3D(${state.dataElementRect!.left}px, ${state.dataElementRect!.top}px, 0) scale3D(1,1,1)`
+					transform: `translate3D(${state.dataElementRect!.left - fixedOffsetX}px, ${state.dataElementRect!.top - fixedOffsetY}px, 0) scale3D(1,1,1)`
 				};
 			}
 
